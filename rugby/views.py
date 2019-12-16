@@ -164,12 +164,13 @@ Highlight = namedtuple('Highlights', ('players', 'matches', 'tries', 'teams'))
 class Highlights(APIView):
     def get(self, request):
 
-        print('{timestamp} -- request started'.format(timestamp=datetime.utcnow().isoformat())
+        print(
+            '{timestamp} -- request started'.format(timestamp=datetime.utcnow().isoformat()))
 
         # Recent request
-        matches=Match.objects.filter(
+        matches = Match.objects.filter(
             video_link_found=1, error=0).order_by('-date')[:12]
-        tries=Try.objects.filter(error=0).order_by('-match__date')[:12]
+        tries = Try.objects.filter(error=0).order_by('-match__date')[:12]
 
         print('{timestamp} -- obtained data'.format(timestamp=datetime.utcnow().isoformat())
 
