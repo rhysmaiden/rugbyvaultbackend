@@ -46,7 +46,6 @@ INSTALLED_APPS = [
     'mathfilters',
     'materialize',
     'django.contrib.sites',
-    'star_ratings',
     'rest_framework',
     'corsheaders',
 ]
@@ -142,9 +141,6 @@ LOGIN_REDIRECT_URL = '/'
 
 ACCOUNT_LOGOUT_ON_GET = True
 
-STAR_RATINGS_RERATE = True
-
-STAR_RATINGS_ANONYMOUS = True
 
 REST_FRAMEWORK = {
     'DATETIME_FORMAT': "%d-%m-%Y",
