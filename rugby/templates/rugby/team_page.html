@@ -1,0 +1,110 @@
+{% extends "rugby/header.html" %}
+{% load mathfilters %}
+
+{% block content %}
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<div class="row">
+
+        <div class="col-lg-2">
+
+          
+          <div class="container">
+          <img src="{{team.logo}}" style="height:100%; width:100%; display:block;">
+        </div>
+          <div class="list-group">
+            <a href="#" class="list-group-item">Teams</a>
+            <a href="#" class="list-group-item">Players</a>
+          </div>
+
+        </div>
+        <!-- /.col-lg-3 -->
+
+        <div class="col-lg-8">
+        	
+
+        <div class="row">
+		{% for match in object_list %}
+
+			{% if match.home_team.pk == team.pk or match.away_team.pk == team.pk %}
+
+				<div class="col-lg-4 col-md-6 mb-4">
+	            	<div class="card h-100">
+	            		<div class="container" style="width: 100%; height: 0px; position: relative; padding-bottom: 56.250%; padding-left: 0px;"><iframe src="{{ match.video_link }}" frameborder="0" width="100%" height="100%" allowfullscreen style="width: 100%; height: 100%; position: absolute;"></iframe></div>
+	                	
+	                	<div class="card-body">
+	                  		<h4 class="card-title">
+	                    		<a href="/team/{{match.home_team.pk}}">{{ match.home_team }}</a> vs <a href="/team/{{match.away_team.pk}}">{{match.away_team}}</a>
+	                  		</h4>
+	                  		<h5>{{ match.date }}</h5>
+	                  		<p class="card-text">{{ match.stadium }}</p>
+	                	</div>
+	                	<div class="card-footer" style="background-color: {{ team.primary_colour }}">
+	                		<small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
+	                	</div>
+	              	</div>
+	            </div>
+	        {% endif %}
+
+        {% endfor %}
+      
+	</div>
+        </div>
+
+
+        <div class="col-md-2 order-md-2 mb-3">
+          <h4 class="d-flex justify-content-between align-items-center mb-3">
+            <span class="text-muted">Top Tries</span>
+            <div class="dropdown">
+			    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Round 1
+			    <span class="caret"></span></button>
+			    <ul class="dropdown-menu dropdown-menu-right">
+			      <li><a href="#">2017</a></li>
+			      <li><a href="#">All Time</a></li>
+			      <li class="divider"></li>
+			      <li><a href="#">Round 1</a></li>
+			      <li><a href="#">Round 2</a></li>
+			    </ul>
+			  </div>
+           
+          </h4>
+          <ul class="list-group mb-3">
+
+          	{% for try in object_list %}
+
+          	{% if try.home_team is none and try.player.team.pk == team.pk %}
+
+
+            <li class="list-group-item d-flex justify-content-between lh-condensed">
+            	<span class="badge badge-secondary badge-pill" style="height:60%">3</span>
+              
+              	<div class="col-lg-12">
+              		<div class="col-lg-12">
+                		<h6 style="width:100%; margin-bottom: 0px;"><a href="http://127.0.0.1:8000/player/{{try.player.pk}}">{{ try.player }}</a></h6>
+            		</div>
+            		<div class="col-lg-12">
+                		<small class="text-muted">{{ try.player.team }}</small>
+            		</div>
+            	<div class="col-lg-12">
+                	<div class="container" style="width: 100%; height: 0px; position: relative; padding-bottom: 56.250%; padding-left: 0px;"><iframe src="{{ try.video_link }}" frameborder="0" width="100%" height="100%" allowfullscreen style="width: 100%; height: 100%; position: absolute;"></iframe></div>
+              	</div>
+              </div>
+            </li>
+
+            {% endif %}
+            {% endfor %}
+            
+          </ul>
+
+          
+        </div>
+
+
+      </div>  
+
+
+	
+
+
+{% endblock %}
+

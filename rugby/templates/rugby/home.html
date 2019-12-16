@@ -1,0 +1,420 @@
+{% extends "rugby/header.html" %}
+{% block content %}
+
+<script src="//code.jquery.com/jquery-1.9.1.js"></script>
+<script src="//code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+
+/* ================
+   global styles
+   ================ */
+
+nav {
+  margin-bottom:20px !important;
+  padding:0px;
+}
+
+.page-title img {
+  height:100px
+}
+
+/* ================
+   typography
+   ================ */
+
+h2 {
+    font-family:Arvo;
+    margin:0px !important;
+    padding:20px
+}
+
+/* ================
+   components
+   ================ */
+
+/* iFrame */
+
+ .ui-helper-hidden-accessible { display:none; }
+
+.aspect-ratio {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 56%; 
+}
+
+.aspect-ratio iframe {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+}
+
+/* Ratings*/
+
+.checked {
+  color: orange;
+}
+
+ .no_rating {
+  opacity:0.5;
+  color:grey;
+ }
+
+ .rate:hover {
+  color:yellow;
+}
+
+/* Search Menu */
+
+.search-bar {
+  background-color: white
+}
+
+.ui-menu-item {
+    background-color:white;
+    padding:5px;
+    cursor: pointer;
+}
+
+.ui-menu-item:hover {
+    background-color:#fafafa;
+    color:black;
+}
+
+.ui-corner-all {
+    color:black !important;
+    text-decoration: none !important;
+}
+
+.ui-menu {
+    width:200px;
+}
+
+.ui-autocomplete { max-height: 200px; overflow-y: auto; overflow-x: hidden;}
+
+
+/* Video tiles */
+
+.vid-pic:hover {
+    box-shadow:0px 1px 1px 1px #333;
+}
+
+#active {
+    border: 4px solid black;
+  outline-style: solid;
+  outline-color: #91413c;
+}
+
+.player-team-buttons {
+  background-color: #3c6291;
+  color:white
+}
+
+</style>
+
+
+<!-- ================
+     Title
+     ================ -->
+
+
+{% if title|length > 0 %}
+<div class="row page-title">
+
+{% if page == "Team" %}
+
+  <img src="{{logo}}">
+  {% endif %}
+  <h2>{{title}}</h2>
+
+</div>
+{% else %}
+<div class="row">
+
+<h2>The Rugby Vault</h2>
+
+</div>
+{% endif %}
+
+
+<!-- ================
+     Search Bar
+     ================ -->
+
+
+<div class="row">
+<nav class="col-lg-9 search-bar">
+    <div class="nav-wrapper" style="background-color:white">
+      <form>
+
+        <div class="input-field" style="background-color:white">
+          <div class="row">
+            <div class="col-lg-1 col-sm-1 col-xs-1">
+                <label class="label-icon" for="search"><i style="color:black" class="material-icons">search</i></label>
+            </div>
+            <div class="col-lg-11 col-sm-11 col-xs-11">
+                <input placeholder="Search for a player or team" type="text" id="autocomplete-input" class="autocomplete">
+
+            </div>
+
+          </div>
+        </div>
+      </form>
+    </div>
+ </nav>
+ <div class="col-lg-3"></div>
+ </div>
+
+
+<!-- ================
+     Player teams
+     ================ -->
+
+{% for team in teams %}
+<a href="/team/{{team.id}}" class="waves-effect waves-light btn away-team b3 player-team-buttons">{{team.team_name}}</a>
+{% endfor %}
+
+
+
+<script>
+function expand(id) {
+    var block = document.getElementById(id);
+    block.classList.remove('col-md-3');
+    block.classList.remove('col-lg-3');
+    block.classList.add('col-md-12');
+    block.classList.add('col-lg-9');
+    block.classList.add('col-xl-6');
+}
+
+function changeVid(match,video_link, info1,info1_link,info2,info2_link,info3,info3_link,element) {
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    var block = document.getElementsByClassName("main-player")[0];
+        block.src = video_link + "?&amp;showinfo=0&amp;color=white&amp;iv_load_policy=3&amp;autoplay=1&amp;modestbranding=1&amp;enablejsapi=1&amp;origin=http%3A%2F%2Ffreegifmaker.me&amp;widgetid=1";
+
+    document.getElementById("active").removeAttribute("id");
+    element.setAttribute("id","active");
+
+    if (match) {
+
+        info1_block = document.getElementsByClassName("info1")[0];
+        info1_block.innerHTML = info1;
+        button_1 = document.getElementsByClassName("b1")[0];
+        button_1.href = info1_link;
+        button_1.innerHTML = "View Match Page";
+
+        team1_block = document.getElementsByClassName("b2")[0];
+        team1_block.innerHTML = info2;
+        team1_block.href = info2_link;
+
+        team2_block = document.getElementsByClassName("b3")[0];
+        team2_block.innerHTML = info3;
+        team2_block.href = info3_link
+
+        info2_block = document.getElementsByClassName("info2")[0];
+        info2_block.innerHTML = "";
+
+        document.getElementsByClassName("b3")[0].style.visibility = "visible";
+
+    } else {
+        info1_block = document.getElementsByClassName("info1")[0];
+        info1_block.innerHTML = info1;
+        button_1 = document.getElementsByClassName("b1")[0];
+        console.log(info1_link)
+        button_1.href = info1_link;
+        button_1.innerHTML = "View Player Page";
+
+        button_2 = document.getElementsByClassName("b2")[0];
+        button_2.href = info2_link;
+        button_2.innerHTML = "View Match Page";
+
+        info2_block = document.getElementsByClassName("info2")[0];
+        info2_block.innerHTML = info2;
+
+        document.getElementsByClassName("b3")[0].style.visibility = "hidden";
+
+
+
+    }
+
+
+
+
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+$(document).ready(function() {
+//$("#myModal").modal();
+
+var data = [];
+var data_id = {};
+
+{% for search in search_results %}
+	data.push("{{search.name}}");
+	data_id["{{search.name}}"] ="{{search.link}}"
+{% endfor %}
+
+	$("input.autocomplete").autocomplete({
+		minLength:1,
+		max:10,
+		source:data,
+		select: function(event,ui) {
+		    window.location.href = data_id[ui.item.value];
+		}
+
+	});
+
+
+});
+
+</script>
+
+
+<div class="row" style="margin:0px">
+
+{% if matches|length > 0 %}
+
+<div class="card-col-md-8 card col-lg-8" style="padding:0 !important;">
+        <div class="card-content" style="padding:0">
+            <div class="aspect-ratio">
+                <iframe class="main-player" id="d-youtube-player main-player" frameborder="0" allowfullscreen="1" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" title="YouTube video player" width="100vw" height="56.25vw" src="{{ matches.0.video_link }}?&amp;showinfo=0&amp;color=white&amp;iv_load_policy=3&amp;autoplay=0&amp;modestbranding=1&amp;enablejsapi=1&amp;origin=http%3A%2F%2Ffreegifmaker.me&amp;widgetid=1"></iframe>
+            </div>
+
+            <div class="row" style="margin-bottom: 0">
+                <div class="col-lg-12">
+                  <div style="padding: 1%; ">
+                      <p class="info1" style="font-size:14pt">{{matches.0.home_team}} vs {{matches.0.away_team}}</p>
+                      <p class="info2" style="font-size:12pt; color:grey">{{matches.0.date}}</p>
+                      
+                      <span class="fa fa-star no_rating"></span>
+                      <span class="fa fa-star no_rating"></span>
+                      <span class="fa fa-star no_rating"></span>
+                      <span class="fa fa-star no_rating"></span>
+                      <span class="fa fa-star no_rating"></span>
+                      <span class="fa no_rating rating-text"><p>{{matches.0.average_rating}}</p></span>
+                      <p></p>
+
+                  </div>
+                </div>
+                <div class="col-9" style="padding: 1%;">
+                    <p>{{matches.0.ratings}}</p>
+                    <a href="{{matches.0.match_link}}" class="waves-effect waves-light btn match-link b1" style="background-color: #3c6291; color:white">View Match Page</a>
+                    <a href="{{matches.0.home_link}}" class="waves-effect waves-light btn home-team b2" style="background-color: #3c6291; color:white">{{matches.0.home_team}}</a>
+                    <a href="{{matches.0.away_link}}" class="waves-effect waves-light btn away-team b3" style="background-color: #3c6291; color:white">{{matches.0.away_team}}</a>
+                    
+                </div>
+                <div class="col-3 align-bottom" style="padding-top:10px">
+
+                
+                    <span class="fa fa-star fa-lg no_rating rate"></span>
+                    <span class="fa fa-star fa-lg no_rating rate"></span>
+                    <span class="fa fa-star fa-lg no_rating rate"></span>
+                    <span class="fa fa-star fa-lg no_rating rate"></span>
+                    <span class="fa fa-star fa-lg no_rating rate"></span>
+
+                </div>
+
+                </div>
+          </div>
+        
+
+
+{% else %}
+
+<div class="card-col-md-8 card col-lg-8" style="padding:0 !important">
+        <div class="card-content" style="padding:0">
+            <div class="aspect-ratio">
+                <iframe class="main-player" id="d-youtube-player main-player" frameborder="0" allowfullscreen="1" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" title="YouTube video player" width="100vw" height="56.25vw" src="{{ tries.0.video_link }}?&amp;showinfo=0&amp;color=white&amp;iv_load_policy=3&amp;autoplay=0&amp;modestbranding=1&amp;enablejsapi=1&amp;origin=http%3A%2F%2Ffreegifmaker.me&amp;widgetid=1"></iframe>
+            </div>
+
+            <div class="row" style="margin-bottom: 0">
+                <div class="col-lg-12">
+                  <div style="padding: 1%; ">
+                      <p class="info1" style="font-size:14pt">{{tries.0.player_name}}</p>
+                      <p style="font-size:12pt color:grey">{{tries.0.try_match}}</p>
+                  </div>
+                </div>
+                <div class="col-lg-12" style="padding: 1%;">
+                    {% if page != "Player" %}
+                    <a href="{{tries.0.player_link}}" class="waves-effect waves-light btn match-link" style="background-color: #3c6291; color:white">View Player Page</a>
+                    {% endif %}
+                    <a href="{{tries.0.match_link}}" class="waves-effect waves-light btn home-team" style="background-color: #3c6291; color:white">View Match Page</a>
+                    {% if page != "Player" %}
+                    <a href="{{m.away_link}}" class="waves-effect waves-light btn away-team" style="background-color: #3c6291; color:white">{{matches.0.away_team}}</a>
+                    {% endif %}
+                </div>
+
+                </div>
+          </div>
+        </div>
+</div>
+
+
+
+
+{% endif %}
+
+</div>
+
+
+<div class="divider"></div>
+
+{% if matches|length > 1 %}
+<h5>Recent Matches</h5>
+{% endif %}
+{% if matches|length == 1 %}
+<h5>Match Highlights</h5>
+{% endif %}
+
+<div class="row matches">
+  {% for m in matches %}
+    <div class=" col-md-3 col-lg-3 col-x" style="padding:0;" id="{{m.id}}">
+        <div class="card-content" style="padding-right:12px !important">
+            
+            <img class="vid-pic" onclick="changeVid(true,'{{m.video_link}}','{{m.home_team}} vs {{m.away_team}}','{{m.match_link}}','{{m.home_team}}','{{m.home_link}}','{{m.away_team}}','{{m.away_link}}',this)" src="{{m.pic}}" style="width:100%; cursor: pointer;"></img>
+            <p class="video-heading" style="font-size:11pt; margin:0">{{m.home_team}} vs {{m.away_team}}</p>
+            <p class="video-subheading" style="font-size:10pt; color:grey">{{m.date}}</p>
+        </div>
+    </div>
+  {% endfor %}
+</div>
+
+
+<div class="divider"></div>
+
+<h5>Recent Tries</h5>
+<div class ="row">
+  {% for t in tries %}
+  <div class=" col-md-3 col-lg-3 col-x" style="padding:0;" id="{{t.id}}">
+        <div class="card-content" style="text-align:center; padding-right:12px !important">
+            <img class="vid-pic" onclick="changeVid(false,'{{t.video_link}}','{{t.player_name}}','{{t.player_link}}','{{t.try_match}}','{{t.match_link}}','','',this)" src="{{t.pic}}" style="width:100%; cursor: pointer;"></img>
+        </div>
+
+        <a href="{{t.player_link}}" style="color:black; font-size:11pt; padding-right:12px; !important; margin:0">{{t.player_name}}</a>
+        <p style="color:grey; font-size:9pt" href="">vs {{t.vs}}</p>
+
+
+
+    </div>
+
+
+
+  {% endfor %}
+
+
+</div>
+
+
+</div>
+
+</div>
+
+
+
+{% endblock %}

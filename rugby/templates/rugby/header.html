@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-150979790-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-150979790-1');
+    </script>
+
+    <script>
+	  window.fbAsyncInit = function() {
+	    FB.init({
+	      appId      : '961324594215213',
+	      cookie     : true,
+	      xfbml      : true,
+	      version    : 'v5.0'
+	    });
+	      
+	    FB.AppEvents.logPageView();   
+	      
+	  };
+
+	  (function(d, s, id){
+	     var js, fjs = d.getElementsByTagName(s)[0];
+	     if (d.getElementById(id)) {return;}
+	     js = d.createElement(s); js.id = id;
+	     js.src = "https://connect.facebook.net/en_US/sdk.js";
+	     fjs.parentNode.insertBefore(js, fjs);
+	   }(document, 'script', 'facebook-jssdk'));
+	</script>
+
+	
+
+	<title>The Rugby Vault</title>
+
+
+	<meta charset="utf-8" />
+	{% load staticfiles %}
+	{% load static %}
+	{% load socialaccount %}
+	{% load ratings %}
+	
+
+	<link rel="stylesheet" href="{% static 'star-ratings/css/star-ratings.css' %}">
+	<script type="text/javascript" src="{% static 'star-ratings/js/dist/star-ratings.min.js' %}"></script>
+
+	<link rel="stylesheet" href="{% static 'rugby/css/bootstrap.min.css' %}" type = "text/css"/>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<meta name="viewport" content = "width=device-width, initial-scale=1.0">
+
+	<!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <link href='https://fonts.googleapis.com/css?family=Arvo' rel='stylesheet'>
+
+    <link rel = "icon" href =
+"{% static 'rugby/img/New Project.png' %}"
+        type = "image/x-icon">
+
+
+	<style type="text/css">
+		html,
+		body {
+		  height:100%
+		}
+
+		.nav-wrapper{
+			background-color: #3c6291;
+		}
+
+		.collection-item {
+			padding-top: 0px !important;
+			padding-bottom: 0px !important;
+			color:black !important;
+			text-decoration:none !important;
+			font-size:9pt;
+		}
+
+		.hide-on-sm-and-down {
+		    text-decoration:none !important;
+		}
+
+		.nav-it:hover {
+		    text-decoration:none !important;
+		    color:white;
+		}
+
+		@font-face {
+          font-family: 'BebasNeue-Regular';
+          src: local('BebasNeue-Regular'),
+               {% static 'rugby/fonts/BebasNeue-Regular.ttf' %} format("truetype");
+        }
+
+        h7 {
+            font-size:11pt;
+
+            display:block;
+        }
+
+        .hidden-button {
+            visibility:hidden;
+        }
+
+        .navbar-nav {
+            flex-direction:row !important;
+        }
+
+	</style>
+</head>
+
+
+
+<nav class="nav-wrapper fixed-top">
+    <div style="width:87%" class="container nav-wrapper">
+
+    <div class="nav-wrapper">
+
+        <a style="text-decoration:none !important; font-family:Arvo" href="/" class="brand-logo left"><i class="material-icons"><img style="height:100%; padding-bottom:22px !important" src="{% static 'rugby/img/New Project.png' %}"></img></i>The Rugby Vault</a>
+
+        <ul class="right d-none d-sm-block" style="padding-left:320px">
+    <li><a class="nav-it" style="text-decoration:none !important" href="/">Home</a></li>
+      <li><a class="nav-it" style="text-decoration:none !important" href="/league/3/">International</a></li>
+      <li><a class="nav-it" style="text-decoration:none !important" href="/league/1/">Super Rugby</a></li>
+      <li><a class="nav-it" style="text-decoration:none !important" href="/league/2/">Aviva Premiership</a></li>
+         </ul>
+
+
+      </div>
+    </div>
+    
+ </nav>
+
+<!--
+
+
+<nav class="nav-wrapper fixed-top justify-content-between" style="">
+    <div style="width:87%" class="container nav-wrapper">
+
+    <div class="nav-wrapper" style="">
+
+        <a style="text-decoration:none !important; font-family:Arvo; font-size: 18pt" href="/" class="brand-logo left"><i class="material-icons"><img style="height:100%; padding-bottom:22px !important" src="{% static 'rugby/img/New Project.png' %}"></img></i>The Rugby Vault</a>
+
+        
+
+        
+        
+
+
+
+	<ul class="right d-none d-sm-block" style="padding-left:320px">
+    <li><a class="nav-it" style="text-decoration:none !important" href="/">Home</a></li>
+      <li><a class="nav-it" style="text-decoration:none !important" href="/league/3/">International</a></li>
+      <li><a class="nav-it" style="text-decoration:none !important" href="/league/1/">Super Rugby</a></li>
+      <li><a class="nav-it" style="text-decoration:none !important" href="/league/2/">Aviva Premiership</a></li>
+
+      {% if user.is_anonymous %}
+      	<li><a class="nav-it" style="text-decoration:none !important" href="{% provider_login_url "google" %}">Login</a></li>
+      {% else %} 
+      	<li><a class="nav-it" style="text-decoration:none !important" href="/accounts/logout">Logout</a></li>
+      {% endif %}
+         
+	</ul>
+    
+
+      <div style="padding-top:10px; padding-bottom: 100px">
+
+      <div class="nav-wrapper right" style="background-color:white; width:50%; height:40px">
+      <form>
+
+        <div class="input-field" style="background-color:white; height:100%">
+          <div class="row" style=" margin:0">
+            <div class="col-1" style="padding: 0px">
+                <label class="label-icon" for="search"><i style="color:black" class="material-icons" style="height: 10px !important">search</i></label>
+            </div>
+            <div class="col-11">
+                <input placeholder="Search for a player or team" type="text" id="autocomplete-input" class="autocomplete">
+
+            </div>
+
+          </div>
+        </div>
+      </form>
+    </div>
+
+</div>
+
+
+      </div>
+    </div>
+    
+ </nav>
+
+  -->
+
+
+
+
+
+
+
+
+ <br/>
+ <br/>
+ <br/>
+
+
+
+<body class="body" style="background-color:#f6f6f6">
+
+	<div class="container" style="min-height:95%; width:90%;">
+
+		<div class="row">
+
+		  <div class="col-lg-2 col-md-2 col-sm-2 hidden-sm-down d-none d-sm-block" style="padding-top: 0px; padding-left:0px">
+
+		  <br><br>
+
+		  {% if request.get_full_path != "/" %}
+
+		  <a onclick="history.back();" class="waves-effect waves-light btn" style="background-color: #3c6291; color:white;"><i class="material-icons dp48">arrow_back</i></a>
+		  {% else %}
+
+		  <a onclick="history.back();" class="waves-effect waves-light btn" style="opacity:0; background-color: #3c6291; color:white;"><i class="material-icons dp48">arrow_back</i></a>
+
+          {% endif %}
+		    <br/>
+
+
+
+		  	<h7 style="margin-top:10px"><b>International</b></h7>
+		  	
+		  	<div class="collection">
+		  	    <a href="/team/48" class="collection-item">Argentina</a>
+		  	    <a href="/team/47" class="collection-item">Australia</a>
+		        <a href="/team/49" class="collection-item">England</a>
+		        <a href="/team/56" class="collection-item">Fiji</a>
+		        <a href="/team/53" class="collection-item">France</a>
+		        <a href="/team/61" class="collection-item">Georgia</a>
+		        <a href="/team/50" class="collection-item">Ireland</a>
+		        <a href="/team/54" class="collection-item">Italy</a>
+		        <a href="/team/55" class="collection-item">Japan</a>
+		        <a href="/team/45" class="collection-item">New Zealand</a>
+		        <a href="/team/60" class="collection-item">Romania</a>
+		        <a href="/team/58" class="collection-item">Samoa</a>
+		        <a href="/team/51" class="collection-item">Scotland</a>
+		        <a href="/team/46" class="collection-item">South Africa</a>
+		        <a href="/team/57" class="collection-item">Tonga</a>
+		        <a href="/team/59" class="collection-item">USA</a>
+		        <a href="/team/83" class="collection-item">Uruguay</a>
+		        <a href="/team/52" class="collection-item">Wales</a>
+		      </div>
+		      <h7><b>English Premiership</b></h7>
+		  	<div class="collection">
+		  	    <a href="/team/26" class="collection-item">Bath</a>
+		  	    <a href="/team/80" class="collection-item">Bristol Bears</a>
+		  	    <a href="/team/21" class="collection-item">Exeter Chiefs</a>
+		  		<a href="/team/27" class="collection-item">Gloucester</a>
+		        <a href="/team/23" class="collection-item">Harlequins</a>
+		        <a href="/team/30" class="collection-item">Leicester Tigers</a>
+		        <a href="/team/25" class="collection-item">London Irish</a>
+		        <a href="/team/24" class="collection-item">Newcastle Falcons</a>
+		        <a href="/team/31" class="collection-item">Northampton Saints</a>
+		        <a href="/team/28" class="collection-item">Sale Sharks</a>
+		        <a href="/team/29" class="collection-item">Saracens</a>
+		        <a href="/team/22" class="collection-item">Wasps</a>
+		        <a href="/team/32" class="collection-item">Worcester Warriors</a>
+		      </div>
+             <h7><b>Super Rugby</b></h7>
+		  	<div class="collection">
+		  	    <a href="/team/12" class="collection-item">Blues</a>
+		  	    <a href="/team/2" class="collection-item">Brumbies</a>
+		  	    <a href="/team/14" class="collection-item">Bulls</a>
+		  	    <a href="/team/11" class="collection-item">Chiefs</a>
+		  	    <a href="/team/8" class="collection-item">Crusaders</a>
+		  	    <a href="/team/9" class="collection-item">Highlanders</a>
+		        <a href="/team/10" class="collection-item">Hurricanes</a>
+		        <a href="/team/19" class="collection-item">Jaguares</a>
+		  	    <a href="/team/16" class="collection-item">Lions</a>
+		        <a href="/team/4" class="collection-item">Reds</a>
+		        <a href="/team/6" class="collection-item">Rebels</a>
+		        <a href="/team/13" class="collection-item">Sharks</a>
+		        <a href="/team/15" class="collection-item">Stormers</a>
+		        <a href="/team/20" class="collection-item">Sunwolves</a>
+		        <a href="/team/3" class="collection-item">Waratahs</a>
+		      </div>
+		  </div>
+
+		  <div class="col-lg-10 col-md-10 col-sm-10">
+
+
+			<br><br>
+			   {% block content %}
+			   {% endblock %}
+
+		  </div>
+
+		</div>
+	</div>
+
+
+</body>
+
+</html>

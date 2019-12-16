@@ -1,0 +1,262 @@
+{% extends "rugby/header.html" %}
+{% load mathfilters %}
+
+{% block content %}
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+	<div class="row">
+
+        <div class="col-lg-2">
+
+          <h1 class="my-4">Super Rugby</h1>
+          <div class="list-group">
+            <a href="#" class="list-group-item">Teams</a>
+            <a href="#" class="list-group-item">Players</a>
+          </div>
+
+        </div>
+        <!-- /.col-lg-3 -->
+
+        <div class="col-lg-6">
+
+        <div class="row">
+
+        	<div class="col-lg-8 col-md-12 mb-8">
+
+	            	<div class="card h-100">
+
+	            		
+	            		<div class="container" style="width: 100%; height: 0px; position: relative; padding-bottom: 56.250%; padding-left: 0px;"><iframe src="{{ match.video_link }}" frameborder="0" width="100%" height="100%" allowfullscreen style="width: 100%; height: 100%; position: absolute;"></iframe></div>
+
+	                	<div class="card-body">
+	                  		<h4 class="card-title">
+	                    		<a href="/team/{{match.home_team.pk}}">Home Team</a> vs <a href="/team/{{match.away_team.pk}}">Away Team</a>
+	                  		</h4>
+	                  		<h5>{{ match.date }}</h5>
+	                  		<p class="card-text">{{ match.stadium }}</p>
+	                	</div>
+	                	<div class="card-footer">
+	                		<small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
+	                	</div>
+	              	</div>
+	        </div>
+	        <div class="col-lg-4 col-md-6 mb-4">
+		        <div class="col-lg-12">
+		            	<div class="card h-100">
+		            		<div class="container" style="width: 100%; height: 0px; position: relative; padding-bottom: 56.250%; padding-left: 0px;"><iframe src="{{ match.video_link }}" frameborder="0" width="100%" height="100%" allowfullscreen style="width: 100%; height: 100%; position: absolute;"></iframe></div>
+		                	
+		                	<div class="card-body">
+		                  		<h4 class="card-title">
+		                    		<a href="/team/{{match.home_team.pk}}">Test</a> vs <a href="/team/{{match.away_team.pk}}">Test</a>
+		                  		</h4>
+		                  		<h5>{{ match.date }}</h5>
+		                  		<p class="card-text">{{ match.stadium }}</p>
+		                	</div>
+		                	<div class="card-footer">
+		                		<small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
+		                	</div>
+		              	</div>
+		            </div>
+		            <div class="col-lg-12">
+		            	<div class="card h-100">
+		            		<div class="container" style="width: 100%; height: 0px; position: relative; padding-bottom: 56.250%; padding-left: 0px;"><iframe src="{{ match.video_link }}" frameborder="0" width="100%" height="100%" allowfullscreen style="width: 100%; height: 100%; position: absolute;"></iframe></div>
+		                	
+		                	<div class="card-body">
+		                  		<h4 class="card-title">
+		                    		<a href="/team/{{match.home_team.pk}}">Test</a> vs <a href="/team/{{match.away_team.pk}}">Test</a>
+		                  		</h4>
+		                  		<h5>{{ match.date }}</h5>
+		                  		<p class="card-text">{{ match.stadium }}</p>
+		                	</div>
+		                	<div class="card-footer">
+		                		<small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
+		                	</div>
+		              	</div>
+		            </div>
+		        </div>
+
+        </div>
+
+        <div class="row" style="padding: 2%">
+        <h1>Highlights - Round 1</h1>
+		</div>
+        	
+
+        <div class="row" style="border-bottom: 5px solid black">
+
+		{% for match in object_list %}
+			{% if match.home_team is not none %}
+
+				<div class="col-lg-4 col-md-6 mb-4">
+	            	<div class="card h-100">
+	            		<script>
+					  		function load_source(box_id) {
+					  			console.log(box_id)
+					  			document.getElementById(box_id).src="{{ match.video_link }}";
+					  			console.log("CLicked");
+					  		}
+					  	</script>
+	            		<div class="container" onclick="load_source()" style="width: 100%; height: 0px; position: relative; padding-bottom: 56.250%; padding-left: 0px;"><iframe src="{{ match.video_link }}" id="{{ match.home_team }}" frameborder="0" width="100%" height="100%" allowfullscreen style="width: 100%; height: 100%; position: absolute;"></iframe></div>
+	                	
+	                	<div class="card-body">
+	                  		<h4 class="card-title">
+	                    		<a href="/team/{{match.home_team.pk}}">{{ match.home_team }}</a> vs <a href="/team/{{match.away_team.pk}}">{{match.away_team}}</a>
+	                  		</h4>
+	                  		<form>
+	                  			<select>
+			                  		{% for player in object_list %}
+			                  		{% if player.team == match.home_team or player.team == match.away_team %}
+
+			                  			<option>{{ player.name }}</option>
+			                  		
+			                  		{% endif %}
+	                  				{% endfor %}
+	                  			</select>
+	                  			<input type="number"/>
+	                  			<input type="number"/>
+	                  		
+
+	                  		</form>
+	                  		<button onclick="load_source('{{match.home_team}}')">CLick</button>
+	                  		<h5>{{ match.date }}</h5>
+	                  		<p class="card-text">{{ match.stadium }}</p>
+	                	</div>
+	                	<div class="card-footer">
+	                		<small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
+	                	</div>
+	              	</div>
+	            </div>
+	        {% endif %}
+
+        {% endfor %}
+	</div>
+	<div class="row" style="padding: 2%">
+        <h1>Upcoming Fixtures</h1>
+		</div>
+        	
+
+        
+	</div>
+
+
+
+
+
+
+
+
+        </div>
+
+
+        <div class="col-md-2 order-md-2 mb-3">
+          <h4 class="d-flex justify-content-between align-items-center mb-3">
+            <span class="text-muted">Top Tries of Round 1</span>
+            
+           
+          </h4>
+          <ul class="list-group mb-3">
+
+          	{% for try in object_list %}
+
+          	{% if try.home_team is none %}
+
+
+            <li class="list-group-item d-flex justify-content-between lh-condensed">
+            	<span class="badge badge-secondary badge-pill" style="height:60%">3</span>
+              
+              	<div class="col-lg-12">
+              		<div class="col-lg-12">
+                		<h6 style="width:100%; margin-bottom: 0px;"><a href="/player/{{try.player.pk}}">{{ try.player }}</a></h6>
+            		</div>
+            		<div class="col-lg-12">
+                		<small class="text-muted">{{ try.player.team }}</small>
+            		</div>
+            	<div class="col-lg-12">
+                	<div class="container" style="width: 100%; height: 0px; position: relative; padding-bottom: 56.250%; padding-left: 0px;"><iframe src="{{ try.video_link }}" frameborder="0" width="100%" height="100%" allowfullscreen style="width: 100%; height: 100%; position: absolute;"></iframe></div>
+              	</div>
+              </div>
+            </li>
+
+            {% endif %}
+            {% endfor %}
+            
+          </ul>
+
+          
+        </div>
+        <div class="col-md-2 order-md-2 mb-3">
+          <h4 class="d-flex justify-content-between align-items-center mb-3">
+            <span class="text-muted">Top Tries of 2017</span>
+           
+          </h4>
+          <ul class="list-group mb-3">
+
+          	{% for try in object_list %}
+
+          	{% if try.home_team is none %}
+
+
+            <li class="list-group-item d-flex justify-content-between lh-condensed">
+            	<span class="badge badge-secondary badge-pill" style="height:60%">3</span>
+              
+              	<div class="col-lg-12">
+              		<div class="col-lg-12">
+                		<h6 style="width:100%; margin-bottom: 0px;"><a href="/player/{{try.player.pk}}">{{ try.player }}</a></h6>
+            		</div>
+            		<div class="col-lg-12">
+                		<small class="text-muted">{{ try.player.team }}</small>
+            		</div>
+            	<div class="col-lg-12">
+                	<div class="container" style="width: 100%; height: 0px; position: relative; padding-bottom: 56.250%; padding-left: 0px;"><iframe src="{{ try.video_link }}" frameborder="0" width="100%" height="100%" allowfullscreen style="width: 100%; height: 100%; position: absolute;"></iframe></div>
+              	</div>
+              </div>
+            </li>
+
+            {% endif %}
+            {% endfor %}
+            
+          </ul>
+
+          
+        </div>
+
+
+      </div>  
+
+      <script>
+
+      		$('#video').on('click', function() {
+				$(this).html('<iframe width="560" height="315" src="//www.youtube.com/embed/9bZkp7q19f0?autoplay=1" frameborder="0" allowfullscreen></iframe>').css('background', 'none');
+			});
+
+			function getYoutubeID(url) {
+				console.log("HELLO")
+				var id = url.match("[\\?&]v=([^&#]*)");
+				id = id[1];
+			    return id;
+			};
+			$('a.youtube').each(function() {
+				var id = getYoutubeID( this.href );
+				this.id = id;
+				var thumb_url = "http://img.youtube.com/vi/"+id+"/maxresdefault.jpg";
+				$('<img width="100%" src="'+thumb_url+'" />').appendTo($('#video'));
+			});
+
+
+
+
+
+			//console.log(videos)
+
+		</script>
+
+		<div id="video" style="background-color:red; width:560px; height:315px;">
+		<a href="http://www.youtube.com/watch?v=9bZkp7q19f0" class="youtube"></a></div>
+
+	
+
+
+{% endblock %}
+

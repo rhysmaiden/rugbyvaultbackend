@@ -1,0 +1,28 @@
+{% extends "rugby/header.html" %}
+
+{% block content %}
+
+
+
+	
+
+		
+		<table>
+			<tr>
+				<th>Name</th>
+				<th>Age</th>
+			</tr>
+			{% for player in object_list %}
+			<tr>
+		  		<td>{{ player.name }}</td>
+		  		<td>{{ player.age }}</td>
+		  	</tr>
+		  	{% endfor %}
+		
+		</table>
+		
+		
+	
+
+{% endblock %}
+

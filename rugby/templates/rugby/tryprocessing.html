@@ -1,0 +1,292 @@
+{% extends "rugby/header.html" %}
+
+{% block content %}
+<h6>{{amount}}</h6>
+<h6>{{try_count}}</h6>
+<h2>{{match}}</h2>
+<h2>{{match.date}}</h2>
+<script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="https://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+
+<script type="text/javascript">
+
+var player_name = "";
+
+$(document).ready(function() {
+
+
+
+	var data = [];
+
+{% for player in players %}
+	data.push("{{player.name}}");
+	//console.log({{object_list.player.name}});
+	console.log("Hello")
+{% endfor %}
+
+	$("input.autocomplete").autocomplete({
+		minLength:2,
+		source:data,
+		select: function(event,ui) {
+			player_name = ui.item.label
+		}
+	});
+
+
+});
+
+
+start_time_minute = 0;
+start_time_second = 0;
+
+end_time_minute = 0;
+end_time_second = 0;
+
+var start_time_picker = true;
+
+function clicked_box(j) {
+
+	if (start_time_picker) {
+		if (j.className.includes("min")) {
+			start_time_minute = j.innerHTML;
+		} else {
+
+			start_time_second = j.innerHTML;
+			start_time_picker = false;
+		}
+
+	    j.style.backgroundColor = "green";
+
+	} else {
+		if (j.className.includes("min")) {
+			end_time_minute = j.innerHTML;
+		} else {
+			end_time_second = j.innerHTML;
+		}
+
+	    j.style.backgroundColor = "red";
+	}
+}
+
+function reset() {
+
+	minutes = document.getElementsByClassName("min");
+	seconds = document.getElementsByClassName("seconds");
+
+	for (i = 0; i < minutes.length; i++) {
+		minutes[i].style.backgroundColor = "white";
+	}
+
+	for (i = 0; i < seconds.length; i++) {
+		seconds[i].style.backgroundColor = "white";
+	}
+
+	start_time_picker = true;
+}
+
+function submitTry(team_id) {
+
+	// console.log(document.getElementsByClassName("ui-autocomplete")[1]);
+	// player_name = document.getElementsByClassName("ui-autocomplete")[1].text;
+	reset();
+
+	console.log(player_name);
+
+	var data = {'player_name': player_name,'start_time_minute':start_time_minute,'start_time_second':start_time_second,'end_time_minute':end_time_minute,'end_time_second':end_time_second,'team_id':team_id};
+	URL = '/tryprocessing/'
+    $.post(URL, data, function(response){
+        if(response === 'success'){ var x =0; }
+        else{ var x =0; }
+    });
+}
+
+function finishedMatch() {
+	var data = {'finished':1};
+	URL = '/tryprocessing/'
+    $.post(URL, data, function(response){
+        if(response === 'success'){ location.reload(); }
+        else{ location.reload(); }
+    });
+}
+
+function error() {
+	var data = {'error':1};
+	URL = '/tryprocessing/'
+    $.post(URL, data, function(response){
+        if(response === 'success'){ location.reload(); }
+        else{ location.reload(); }
+    });
+}
+
+</script>
+
+
+
+<div id="video-content"><iframe id="d-youtube-player" frameborder="0" allowfullscreen="1" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" title="YouTube video player" width="550" height="315" src="{{ video_link}}&amp;showinfo=0&amp;color=white&amp;iv_load_policy=3&amp;autoplay=0&amp;modestbranding=1&amp;enablejsapi=1&amp;origin=http%3A%2F%2Ffreegifmaker.me&amp;widgetid=1"></iframe></div>
+
+<div class="col s6">
+	<div class="row">
+		<div class="col s12">
+		  <div id="1" class="col s1 min" onclick="clicked_box(this)">0</div>
+	      <div id="1" class="col s1 min" onclick="clicked_box(this)">1</div>
+	      <div id="1" class="col s1 min" onclick="clicked_box(this)">2</div>
+	      <div id="1" class="col s1 min" onclick="clicked_box(this)">3</div>
+	      <div id="1" class="col s1 min" onclick="clicked_box(this)">4</div>
+	      <div id="1" class="col s1 min" onclick="clicked_box(this)">5</div>
+	      <div id="1" class="col s1 min" onclick="clicked_box(this)">6</div>
+	      <div id="1" class="col s1 min" onclick="clicked_box(this)">7</div>
+	      <div id="1" class="col s1 min" onclick="clicked_box(this)">8</div>
+	      <div id="1" class="col s1 min" onclick="clicked_box(this)">9</div>
+	      <div id="1" class="col s1 min" onclick="clicked_box(this)">10</div>
+	      <div id="1" class="col s1 min" onclick="clicked_box(this)">11</div>
+	      <div id="1" class="col s1 min" onclick="clicked_box(this)">12</div>
+	      <div id="1" class="col s1 min" onclick="clicked_box(this)">13</div>
+	      <div id="1" class="col s1 min" onclick="clicked_box(this)">14</div>
+	      <div id="1" class="col s1 min" onclick="clicked_box(this)">15</div>
+	      <div id="1" class="col s1 min" onclick="clicked_box(this)">16</div>
+	      <div id="1" class="col s1 min" onclick="clicked_box(this)">17</div>
+	      <div id="1" class="col s1 min" onclick="clicked_box(this)">18</div>
+	      <div id="1" class="col s1 min" onclick="clicked_box(this)">19</div>
+	      <div id="1" class="col s1 min" onclick="clicked_box(this)">20</div>
+	      <div id="1" class="col s1 min" onclick="clicked_box(this)">21</div>
+	      <div id="1" class="col s1 min" onclick="clicked_box(this)">22</div>
+	      <div id="1" class="col s1 min" onclick="clicked_box(this)">23</div>
+	    </div>
+	</div>
+	<div class="row">
+		<div class="col s12">
+		  <div id="1" class="col s1 seconds" onclick="clicked_box(this)">0</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">1</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">2</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">3</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">4</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">5</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">6</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">7</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">8</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">9</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">10</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">11</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">12</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">13</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">14</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">15</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">16</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">17</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">18</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">19</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">20</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">21</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">22</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">23</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">24</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">25</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">26</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">27</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">28</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">29</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">30</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">31</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">32</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">33</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">34</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">35</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">36</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">37</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">38</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">39</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">40</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">41</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">42</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">43</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">44</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">45</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">46</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">47</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">48</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">49</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">50</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">51</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">52</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">53</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">54</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">55</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">56</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">57</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">58</div>
+	      <div id="1" class="col s1 seconds" onclick="clicked_box(this)">59</div>
+	    </div>
+
+    </div>
+    <div class="row">
+    	<div class="col s2">
+    		<button onclick="error()">Error</button>
+    	</div>
+    	<div class="col s2">
+    		<button onclick="reset()">Reset</button>
+    	</div>
+    	<div class="col s2">
+    		<button onclick="submitTry({{ match.home_team.id }})">{{ match.home_team.team_name }}</button>
+    	</div>
+    	<div class="col s2">
+    		<button onclick="submitTry({{ match.away_team.id }})">{{ match.away_team.team_name }}</button>
+    	</div>
+    	<div class="col s2">
+    		<button onclick="finishedMatch()">Finished</button>
+    	</div>
+    </div>
+
+</div>
+<div class="col s6">
+	<div class="col s2">
+	</div>
+	<div class="col s8">
+    	<div class="input-field col s12">
+          <input type="text" id="autocomplete-input" class="autocomplete">
+        </div>
+    </div>
+    <div class="col s2">
+	</div>
+</div>
+
+
+
+</div>
+
+    <div class="col s6"></div>
+</div>
+
+<style>
+
+.ytp-pause-overlay{
+display:none;
+}
+
+.ytp-pause-overlay
+ {
+    bottom:-200px; //give !important if not working
+ }
+
+ .btn {
+ 	width:100%;
+ }
+
+ .col {
+
+ 	text-align: center;
+ 	padding-left: 0px !important;
+ 	padding-right: 0px !important;
+ }
+
+ .min, .seconds {
+ 	border:solid 1px black;
+ }
+
+ .ui-helper-hidden-accessible { display:none; }
+
+
+</style>
+
+
+
+{% endblock %}
