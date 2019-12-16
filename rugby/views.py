@@ -172,15 +172,16 @@ class Highlights(APIView):
             video_link_found=1, error=0).order_by('-date')[:12]
         tries = Try.objects.filter(error=0).order_by('-match__date')[:12]
 
-        print('{timestamp} -- obtained data'.format(timestamp=datetime.utcnow().isoformat())
+        print(
+            '{timestamp} -- obtained data'.format(timestamp=datetime.utcnow().isoformat()))
 
-        match_serializer=MatchSerializer(
+        match_serializer = MatchSerializer(
             matches, many=True)
-        try_serializer=TrySerializer(
+        try_serializer = TrySerializer(
             tries, many=True)
 
-        print('{timestamp} -- finished serializing'.format(timestamp=datetime.utcnow().isoformat())
-
+        print(
+            '{timestamp} -- finished serializing'.format(timestamp=datetime.utcnow().isoformat()))
 
         return Response({
             "matches": match_serializer.data,
@@ -191,28 +192,28 @@ class Highlights(APIView):
 class PlayerAPI(APIView):
     def get(self, request):
 
-        player_id=request.GET.get('id')
-        order=request.GET.get('order')
+        player_id = request.GET.get('id')
+        order = request.GET.get('order')
 
         print(player_id)
 
-        player=Player.objects.filter(id=player_id)[0]
+        player = Player.objects.filter(id=player_id)[0]
 
-        teams=Team.objects.filter(
+        teams = Team.objects.filter(
             id__in=[player.team.id, player.internation_team.id])
 
-        tries=Try.objects.filter(
+        tries = Try.objects.filter(
             player=player_id, error=0)
 
         if order == "date":
-            tries=tries.order_by('-match__date')
+            tries = tries.order_by('-match__date')
         elif order == "rating":
-            tries=sorted(tries, key=lambda x: x.avg_rating(), reverse=True)
+            tries = sorted(tries, key=lambda x: x.avg_rating(), reverse=True)
             # tries.order_by('-avg_rating')
 
-        try_serializer=TrySerializer(tries, many=True)
-        player_serializer=PlayerSerializer(player, many=False)
-        team_serializer=TeamSerializer(teams, many=True)
+        try_serializer = TrySerializer(tries, many=True)
+        player_serializer = PlayerSerializer(player, many=False)
+        team_serializer = TeamSerializer(teams, many=True)
 
         return Response({
             "player": player_serializer.data,
@@ -224,33 +225,33 @@ class PlayerAPI(APIView):
 class TeamAPI(APIView):
     def get(self, request):
 
-        team_id=request.GET.get('id')
-        order=request.GET.get('order')
+        team_id = request.GET.get('id')
+        order = request.GET.get('order')
 
-        team=Team.objects.filter(id=team_id)[0]
+        team = Team.objects.filter(id=team_id)[0]
 
-        players=Player.objects.filter(
+        players = Player.objects.filter(
             Q(team=team) | Q(internation_team=team))
 
-        matches=Match.objects.filter(Q(home_team=team) | Q(
+        matches = Match.objects.filter(Q(home_team=team) | Q(
             away_team=team)).filter(error=0)
 
-        tries=Try.objects.filter(
+        tries = Try.objects.filter(
             team=team, error=0)
 
         if order == "date":
-            matches=matches.order_by('-date')
-            tries=tries.order_by('-match__date')[:12]
+            matches = matches.order_by('-date')
+            tries = tries.order_by('-match__date')[:12]
         elif order == "rating":
-            matches=sorted(
+            matches = sorted(
                 matches, key=lambda x: x.avg_rating(), reverse=True)
-            tries=sorted(tries, key=lambda x: x.avg_rating(),
+            tries = sorted(tries, key=lambda x: x.avg_rating(),
                            reverse=True)[:12]
 
-        team_serializer=TeamSerializer(team, many=False)
-        player_serializer=PlayerSerializer(players, many=True)
-        match_serializer=MatchSerializer(matches, many=True)
-        try_serializer=TrySerializer(tries, many=True)
+        team_serializer = TeamSerializer(team, many=False)
+        player_serializer = PlayerSerializer(players, many=True)
+        match_serializer = MatchSerializer(matches, many=True)
+        try_serializer = TrySerializer(tries, many=True)
 
         return Response({
             "team": team_serializer.data,
@@ -264,21 +265,21 @@ class MatchHistoryAPI(APIView):
 
     def get(self, request):
 
-        home_team_id=request.GET.get('home_team')
-        away_team_id=request.GET.get('away_team')
+        home_team_id = request.GET.get('home_team')
+        away_team_id = request.GET.get('away_team')
 
-        teams=Team.objects.filter(Q(id=home_team_id) | Q(
+        teams = Team.objects.filter(Q(id=home_team_id) | Q(
             id=away_team_id))
 
-        matches=Match.objects.filter(Q(
+        matches = Match.objects.filter(Q(
             home_team__in=[teams[0].id, teams[1].id]) & Q(away_team__in=[teams[0].id, teams[1].id])).filter(error=0).order_by('-date')
 
-        tries=Try.objects.filter(
+        tries = Try.objects.filter(
             match__in=matches).filter(error=0).order_by('-match__date')[:10]
 
-        team_serializer=TeamSerializer(teams, many=True)
-        match_serializer=MatchSerializer(matches, many=True)
-        try_serializer=TrySerializer(tries, many=True)
+        team_serializer = TeamSerializer(teams, many=True)
+        match_serializer = MatchSerializer(matches, many=True)
+        try_serializer = TrySerializer(tries, many=True)
 
         return Response({
             "teams": team_serializer.data,
@@ -291,12 +292,12 @@ class VideoAPI(APIView):
     def get(self, request):
 
         if request.GET.get('type') == "try":
-            single_try=Try.objects.filter(id=request.GET.get('id'))[0]
-            player_tries=Try.objects.filter(
+            single_try = Try.objects.filter(id=request.GET.get('id'))[0]
+            player_tries = Try.objects.filter(
                 player=single_try.player, error=0)[:12]
 
-            single_try_serializer=TrySerializer(single_try, many=False)
-            player_tries_serializer=TrySerializer(player_tries, many=True)
+            single_try_serializer = TrySerializer(single_try, many=False)
+            player_tries_serializer = TrySerializer(player_tries, many=True)
 
             return Response({
                 "try": single_try_serializer.data,
@@ -305,19 +306,19 @@ class VideoAPI(APIView):
 
         elif request.GET.get('type') == "match":
 
-            match=Match.objects.filter(id=request.GET.get('id'))[0]
+            match = Match.objects.filter(id=request.GET.get('id'))[0]
 
-            rating_object=MatchRating.objects.filter(
+            rating_object = MatchRating.objects.filter(
                 match=match, userId=request.GET.get('googleId'))
-            rating=0
+            rating = 0
             if len(rating_object) > 0:
-                rating=rating_object[0].rating
+                rating = rating_object[0].rating
 
-            matches=Match.objects.filter(Q(
+            matches = Match.objects.filter(Q(
                 home_team__in=[match.home_team, match.away_team]) & Q(away_team__in=[match.home_team, match.away_team])).filter(error=0).order_by('-date')[:10]
 
-            match_serializer=MatchSerializer(match, many=False)
-            matches_serializer=MatchSerializer(matches, many=True)
+            match_serializer = MatchSerializer(match, many=False)
+            matches_serializer = MatchSerializer(matches, many=True)
 
             return Response({
                 "match": match_serializer.data,
@@ -330,27 +331,27 @@ class VideoAPI(APIView):
 class RatingAPI(APIView):
     def post(self, request):
 
-        body=json.loads(request.body.decode('utf-8'))
+        body = json.loads(request.body.decode('utf-8'))
         print(body)
         if request.GET.get('type') == "match":
-            match=MatchRating.objects.filter(
+            match = MatchRating.objects.filter(
                 userId=body['googleId'], match=body['id'])
             if len(match) == 0:
-                newrating=MatchRating(
+                newrating = MatchRating(
                     userId=body['googleId'], match=Match.objects.filter(id=body['id'])[0], rating=body['rating'])
                 newrating.save()
             else:
-                match[0].rating=body['rating']
+                match[0].rating = body['rating']
                 match[0].save()
         elif request.GET.get('type') == "try":
-            try_obj=TryRating.objects.filter(
+            try_obj = TryRating.objects.filter(
                 userId=body['googleId'], try_obj=body['id'])
             if len(try_obj) == 0:
-                newrating=TryRating(
+                newrating = TryRating(
                     userId=body['googleId'], try_obj=Try.objects.filter(id=body['id'])[0], rating=body['rating'])
                 newrating.save()
             else:
-                try_obj[0].rating=body['rating']
+                try_obj[0].rating = body['rating']
                 try_obj[0].save()
 
         return Response(None)
@@ -358,54 +359,54 @@ class RatingAPI(APIView):
 
 class ChartAPI(APIView):
     def get(self, request):
-        object_list=[]
-        type=request.GET.get('type')
-        requested_range=request.GET.get('range')
+        object_list = []
+        type = request.GET.get('type')
+        requested_range = request.GET.get('range')
 
         if type == "match":
-            object_list=Match.objects.all()
+            object_list = Match.objects.all()
 
             if requested_range == "allTime":
-                object_list=object_list
+                object_list = object_list
 
             elif requested_range == "thisMonth":
-                object_list=object_list.filter(
+                object_list = object_list.filter(
                     date__month=datetime.now().month, date__year=datetime.now().year)
 
             elif requested_range == "thisYear":
-                object_list=object_list.filter(
+                object_list = object_list.filter(
                     date__year=datetime.now().year)
 
             print("start")
-            object_list=sorted(
+            object_list = sorted(
                 object_list, key=lambda x: x.avg_rating(), reverse=True)[:20]
 
             print("end")
 
-            matches_serializer=MatchSerializer(object_list, many=True)
+            matches_serializer = MatchSerializer(object_list, many=True)
 
             return Response({
                 "matches": matches_serializer.data
             })
 
         elif type == "try":
-            object_list=Try.objects.all()
+            object_list = Try.objects.all()
 
             if requested_range == "allTime":
-                object_list=object_list
+                object_list = object_list
 
             elif requested_range == "thisMonth":
-                object_list=object_list.filter(
+                object_list = object_list.filter(
                     match__date__month=datetime.now().month, match__date__year=datetime.now().year)
 
             elif requested_range == "thisYear":
-                object_list=object_list.filter(
+                object_list = object_list.filter(
                     match__date__year=datetime.now().year)
 
-            object_list=sorted(
+            object_list = sorted(
                 object_list, key=lambda x: x.avg_rating(), reverse=True)[:20]
 
-            tries_serializer=TrySerializer(object_list, many=True)
+            tries_serializer = TrySerializer(object_list, many=True)
 
             return Response({
                 "tries": tries_serializer.data
@@ -414,19 +415,19 @@ class ChartAPI(APIView):
 
 class SearchAPI(APIView):
     def get(self, request):
-        query=request.GET.get('query')
+        query = request.GET.get('query')
 
-        teams=Team.objects.filter(team_name__contains=query)[:3]
-        players=Player.objects.filter(name__contains=query)[:3]
+        teams = Team.objects.filter(team_name__contains=query)[:3]
+        players = Player.objects.filter(name__contains=query)[:3]
 
-        searchResults=[]
+        searchResults = []
 
         for t in teams:
-            search_object={"id": t.id, "name": t.team_name, "type": "team"}
+            search_object = {"id": t.id, "name": t.team_name, "type": "team"}
             searchResults.append(search_object)
 
         for p in players:
-            search_object={"id": p.id, "name": p.name, "type": "player"}
+            search_object = {"id": p.id, "name": p.name, "type": "player"}
             searchResults.append(search_object)
 
         return Response(searchResults)
@@ -437,14 +438,14 @@ class ReportAPI(APIView):
 
         print("REPORT")
 
-        body=json.loads(request.body.decode('utf-8'))
+        body = json.loads(request.body.decode('utf-8'))
         if body['type'] == "match":
-            match=Match.objects.filter(id=body['id'])[0]
-            match.error=1
+            match = Match.objects.filter(id=body['id'])[0]
+            match.error = 1
             match.save()
         else:
-            try_obj=Try.objects.filter(id=body['id'])[0]
-            try_obj.error=1
+            try_obj = Try.objects.filter(id=body['id'])[0]
+            try_obj.error = 1
             try_obj.save()
 
         return Response(None)
