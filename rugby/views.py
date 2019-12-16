@@ -10,7 +10,7 @@ from .serializers import TrySerializer
 from .serializers import TeamSerializer
 from rest_framework import viewsets
 from django.contrib.auth.models import User
-from star_ratings import app_settings, get_star_ratings_rating_model
+
 from django.db.models import Q
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
