@@ -35,7 +35,6 @@ urlpatterns = [
     #     MatchView.as_view(template_name="rugby/home.html")),
     # url(r'^league/(?P<pk>[0-9]+)/$',
     #     LeagueView.as_view(template_name="rugby/home.html")),
-    url(r'^accounts/', include('allauth.urls')),
     url(r'^ratings/', include('star_ratings.urls', namespace='ratings')),
     url(r'^highlights/$', views.Highlights.as_view()),
     url(r'^player/$', views.PlayerAPI.as_view()),
