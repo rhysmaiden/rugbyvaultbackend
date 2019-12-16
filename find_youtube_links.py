@@ -11,6 +11,7 @@ import time
 import datetime
 from youtube_videos import youtube_search
 from datetime import datetime, timedelta
+# from youtube_search_v2 import search
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "rugby.settings")
 django.setup()
@@ -26,12 +27,16 @@ matches = Match.objects.filter(
 
 for match in matches:
 
+    if match.video_link != "":
+        continue
+
     start_time_period = match.date - timedelta(days=1)
-    end_time_period = match.date + timedelta(days=10)
+    end_time_period = match.date + timedelta(days=16)
 
-    print(end_time_period)
 
-    print(match.home_team.team_name + " v " + match.away_team.team_name + " rugby highlights " + str(match.date.year))
+    # print(end_time_period)
+
+    # print(match.home_team.team_name + " v " + match.away_team.team_name + " rugby highlights " + str(match.date.year))
 
     found_videos = youtube_search(
         match.home_team.team_name + " v " + match.away_team.team_name + " rugby highlights " + str(match.date.year))
@@ -43,6 +48,7 @@ for match in matches:
     for video in found_videos:
 
         video_date = datetime.strptime(video.date[:10], "%Y-%m-%d")
+        # print(match.date.day, video_date.day, start_time_period.day,end_time_period.day)
         if video_date > start_time_period and video_date < end_time_period:
             video_id = video.video_id
             foundVideo = True
@@ -61,4 +67,4 @@ for match in matches:
         match.save()
         print("Didn't Find: " + str(match))
 
-    time.sleep(10)
+    # time.sleep()
