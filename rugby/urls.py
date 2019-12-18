@@ -19,8 +19,8 @@ from rest_framework import routers
 
 from rest_framework.urlpatterns import format_suffix_patterns
 
-router = routers.DefaultRouter()
-router.register('highlights', views.Highlights, basename="players")
+# router = routers.DefaultRouter()
+# router.register('highlights', views.Highlights, basename="players")
 
 
 urlpatterns = [
