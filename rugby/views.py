@@ -55,7 +55,7 @@ def tryprocessing(request):
 
     # Get the latest match
     latest_match = Match.objects.filter(
-        video_link_found=1, match_completely_processed=0, error=0, league_id=international_league).order_by('-date')[0]
+        video_link_found=1, match_completely_processed=0, error=0).order_by('-date')[0]
     my_context["match"] = latest_match
 
     if request.method == "POST":
