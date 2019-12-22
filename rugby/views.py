@@ -26,7 +26,19 @@ from.models import Try
 from.models import League
 from.models import MatchRating
 from.models import TryRating
+
+import re
+
+import urllib
+import urllib.request
+from bs4 import BeautifulSoup
 # from .filters import TryFilter
+
+def make_soup(url):
+
+	thepage = urllib.request.urlopen(url)
+	soupdata = BeautifulSoup(thepage, "html.parser")
+	return soupdata
 
 
 @csrf_exempt
@@ -431,6 +443,87 @@ class SearchAPI(APIView):
             searchResults.append(search_object)
 
         return Response(searchResults)
+
+class TryProcessingAPI(APIView):
+    
+    def get(self, request):
+       
+        match_id = request.GET.get('id')
+        match_object = Match.objects.filter(id=match_id)[0]
+        match_serializer = MatchSerializer(match_object,many=False)
+
+        scoreboard_url = "https://www.espn.co.uk/rugby/scoreboard?date=" + str(match_object.date.year) + str(match_object.date.month) + str(match_object.date.day)
+        soup = make_soup(scoreboard_url)
+        
+        games = soup.findAll('div', {'class': 'scoreboard-wrapper'})
+        teams = soup.findAll('span', {'class': 'short-name'})
+
+        game_index = 0
+
+        # There are double the number of teams to games
+        for index,team in enumerate(teams):
+            if match_object.home_team.team_name == team.text:
+                if index % 2 == 1:
+                    index -= 1
+                
+                game_index = int(index/2)
+                break
+        
+        game = games[game_index]
+
+        home_block = game.find('div',{'class','home'})
+        away_block = game.find('div',{'class','away'})
+
+        home_players = home_block.find('ul',{'class','icon-rugby-solid'}).findAll('li')
+        away_players = away_block.find('ul',{'class','icon-rugby-solid'}).findAll('li')
+
+        players = home_players + away_players
+
+        player_dicts = []
+
+        for counter, player in enumerate(players):
+
+            player_name = player.find('a').text
+
+            try:
+                player_object = Player.objects.filter(name=player_name)[0]
+            except:
+                if counter > len(home_players) - 1:
+                    player_object = Player(name=player_name, team=match_object.away_team)
+                else:
+                    player_object = Player(name=player_name, team=match_object.home_team)
+                    player_object.save()
+
+            time_unclean = player.find('span').text
+            times = time_unclean.split(',')
+
+            for t in times:
+                time_cleaned = int(re.search(r'\d+', t).group())
+                player_dict = {'player_name':player_name, 'time':time_cleaned, 'id':player_object.id}
+                player_dicts.append(player_dict)
+                   
+        players_sorted = sorted(player_dicts, key=lambda k: k['time'])    
+        
+        return Response({"players":players_sorted,"match":match_serializer.data})
+
+class AddTryAPI(APIView):
+    def post(self, request):
+        body = json.loads(request.body.decode('utf-8'))
+
+        # Recieve: player_id, match_id, time (need to convert to seconds - done in frontend), 
+
+        start_time = body['start_time']
+        end_time = body['end_time']
+
+        match = Match.objects.filter(id=body['match_id'])[0]
+        player = Player.objects.filter(id=body['player_id'])[0]
+
+        video_link = "https://www.youtube.com/embed/is8VKk5teGs?start=" + start_time + "&end=" + end_time + ";rel=0"
+
+        try_object = Try(match=match,player=player,start_time=start_time,
+        end_time=end_time,video_link="")
+
+        try_object.save()
 
 
 class ReportAPI(APIView):

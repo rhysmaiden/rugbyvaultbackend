@@ -44,7 +44,8 @@ urlpatterns = [
     url(r'^rate/$', views.RatingAPI.as_view()),
     url(r'^chart/$', views.ChartAPI.as_view()),
     url(r'^search/$', views.SearchAPI.as_view()),
-    url(r'^report/', views.ReportAPI.as_view())
+    url(r'^report/', views.ReportAPI.as_view()),
+    url(r'^processing/', views.TryProcessingAPI.as_view()),
 
 
 

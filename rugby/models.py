@@ -77,12 +77,9 @@ class PlayerManager(models.Manager):
 
 class Player(models.Model):
     name = models.TextField()
-    age = models.IntegerField()
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
     internation_team = models.ForeignKey(
-        Team, on_delete=models.CASCADE, related_name='h')
-    picture = models.TextField(default='hi')
-    coolfact = models.TextField(default='hi')
+        Team, on_delete=models.CASCADE, related_name='h', default=2)
 
     objects = PlayerManager()
 
