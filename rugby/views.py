@@ -35,10 +35,16 @@ from bs4 import BeautifulSoup
 # from .filters import TryFilter
 
 def make_soup(url):
+    try:
+        print(url)
+        thepage = urllib.request.urlopen(url)
+        soupdata = BeautifulSoup(thepage, "html.parser")
 
-	thepage = urllib.request.urlopen(url)
-	soupdata = BeautifulSoup(thepage, "html.parser")
-	return soupdata
+        return soupdata
+    except urllib.error as e:
+        print(e)
+	
+    return True
 
 
 @csrf_exempt
@@ -452,8 +458,10 @@ class TryProcessingAPI(APIView):
         match_object = Match.objects.filter(id=match_id)[0]
         match_serializer = MatchSerializer(match_object,many=False)
 
-        scoreboard_url = "https://www.espn.co.uk/rugby/scoreboard?date=" + str(match_object.date.year) + str(match_object.date.month) + str(match_object.date.day)
+        scoreboard_url = "https://www.espn.co.uk/rugby/scoreboard?date=" + str(match_object.date.year) + str(match_object.date.month) + str("{:02d}".format(match_object.date.day))
         soup = make_soup(scoreboard_url)
+
+        print(soup)
         
         games = soup.findAll('div', {'class': 'scoreboard-wrapper'})
         teams = soup.findAll('span', {'class': 'short-name'})
