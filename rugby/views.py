@@ -455,13 +455,18 @@ class TryProcessingAPI(APIView):
     def get(self, request):
        
         match_id = request.GET.get('id')
-        match_object = Match.objects.filter(id=match_id)[0]
+
+        if match_id == 'undefined':
+            match_object = Match.objects.filter(match_completely_processed=0,video_link_found=1,error=0).order_by('-date')[0]
+        else:
+            match_object = Match.objects.filter(id=match_id)[0]
+
         match_serializer = MatchSerializer(match_object,many=False)
 
         scoreboard_url = "https://www.espn.co.uk/rugby/scoreboard?date=" + str(match_object.date.year) + str(match_object.date.month) + str("{:02d}".format(match_object.date.day))
         soup = make_soup(scoreboard_url)
 
-        print(soup)
+        print(match_object)
         
         games = soup.findAll('div', {'class': 'scoreboard-wrapper'})
         teams = soup.findAll('span', {'class': 'short-name'})
@@ -482,8 +487,18 @@ class TryProcessingAPI(APIView):
         home_block = game.find('div',{'class','home'})
         away_block = game.find('div',{'class','away'})
 
-        home_players = home_block.find('ul',{'class','icon-rugby-solid'}).findAll('li')
-        away_players = away_block.find('ul',{'class','icon-rugby-solid'}).findAll('li')
+        home_players = []
+        away_players = []
+
+        try:
+            home_players = home_block.find('ul',{'class','icon-rugby-solid'}).findAll('li')
+        except:
+            print("No home tries")
+        
+        try:
+            away_players = away_block.find('ul',{'class','icon-rugby-solid'}).findAll('li')
+        except:
+            print("No away tries")
 
         players = home_players + away_players
 
@@ -518,20 +533,32 @@ class AddTryAPI(APIView):
     def post(self, request):
         body = json.loads(request.body.decode('utf-8'))
 
+        print(body['tries'])
+
+        match = Match.objects.filter(id=body['match']['id'])[0]
+
         # Recieve: player_id, match_id, time (need to convert to seconds - done in frontend), 
+        for trie in body['tries']:
+            start_time = trie['start_time']
+            end_time = trie['end_time']
 
-        start_time = body['start_time']
-        end_time = body['end_time']
+            
+            player = Player.objects.filter(id=trie['id'])[0]
 
-        match = Match.objects.filter(id=body['match_id'])[0]
-        player = Player.objects.filter(id=body['player_id'])[0]
+            
+            video_link = "https://www.youtube.com/embed/" + match.video_link.split('=')[1] + "?start=" + str(start_time) + "&end=" + str(end_time) + ";rel=0"
 
-        video_link = "https://www.youtube.com/embed/is8VKk5teGs?start=" + start_time + "&end=" + end_time + ";rel=0"
+            try_object = Try(match=match,player=player,start_time=start_time,
+            end_time=end_time,video_link=video_link)
 
-        try_object = Try(match=match,player=player,start_time=start_time,
-        end_time=end_time,video_link="")
+            print(try_object)
 
-        try_object.save()
+            try_object.save()
+
+        match.match_completely_processed = 1
+        match.save()
+
+        return Response(None)
 
 
 class ReportAPI(APIView):
