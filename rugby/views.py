@@ -513,6 +513,7 @@ class TryProcessingAPI(APIView):
             except:
                 if counter > len(home_players) - 1:
                     player_object = Player(name=player_name, team=match_object.away_team)
+                    player_object.save()
                 else:
                     player_object = Player(name=player_name, team=match_object.home_team)
                     player_object.save()
@@ -556,6 +557,7 @@ class AddTryAPI(APIView):
             try_object.save()
 
         match.match_completely_processed = 1
+        print(match)
         match.save()
 
         return Response(None)
