@@ -47,6 +47,7 @@ urlpatterns = [
     url(r'^report/', views.ReportAPI.as_view()),
     url(r'^processing/', views.TryProcessingAPI.as_view()),
     url(r'^addtry/', views.AddTryAPI.as_view()),
+    
 
 
 

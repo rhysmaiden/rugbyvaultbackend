@@ -34,6 +34,42 @@ import urllib.request
 from bs4 import BeautifulSoup
 # from .filters import TryFilter
 
+alternate_names = [{
+	"espn_name":"Gloucester Rugby",
+	"vault_name":"Gloucester"
+}, {
+	"espn_name":"Bath Rugby",
+	"vault_name":"Bath"
+}, {
+	"espn_name":"Clermont Auvergne",
+	"vault_name":"Clermont"
+}, {
+	"espn_name":"Bristol Rugby",
+	"vault_name":"Bristol"
+},{
+	"espn_name":"Stade Francais Paris",
+	"vault_name":"Stade Francais"
+},{
+	"espn_name":"Castres Olympique",
+	"vault_name":"Castres"
+},{
+	"espn_name":"Montpellier Herault",
+	"vault_name":"Montpellier"
+},{
+	"espn_name":"Stade Toulousain",
+	"vault_name":"Toulousain"
+},]
+
+def check_for_alternate_name(team_name):
+	
+	for team in alternate_names:
+		if team["espn_name"] == team_name:
+			team_name = team["vault_name"]
+			
+			return team_name
+
+	return team_name
+
 def make_soup(url):
     try:
         print(url)
@@ -252,7 +288,7 @@ class TeamAPI(APIView):
             Q(team=team) | Q(internation_team=team))
 
         matches = Match.objects.filter(Q(home_team=team) | Q(
-            away_team=team)).filter(error=0)
+            away_team=team)).filter(error=0, video_link_found=1)
 
         tries = Try.objects.filter(
             team=team, error=0)
@@ -463,7 +499,7 @@ class TryProcessingAPI(APIView):
 
         match_serializer = MatchSerializer(match_object,many=False)
 
-        scoreboard_url = "https://www.espn.co.uk/rugby/scoreboard?date=" + str(match_object.date.year) + str(match_object.date.month) + str("{:02d}".format(match_object.date.day))
+        scoreboard_url = "https://www.espn.co.uk/rugby/scoreboard?date=" + str(match_object.date.year) + str("{:02d}".format(match_object.date.month)) + str("{:02d}".format(match_object.date.day))
         soup = make_soup(scoreboard_url)
 
         print(match_object)
@@ -475,7 +511,9 @@ class TryProcessingAPI(APIView):
 
         # There are double the number of teams to games
         for index,team in enumerate(teams):
-            if match_object.home_team.team_name == team.text:
+            team_text = check_for_alternate_name(team.text)
+			
+            if match_object.home_team.team_name == team_text:
                 if index % 2 == 1:
                     index -= 1
                 
@@ -569,6 +607,7 @@ class ReportAPI(APIView):
         print("REPORT")
 
         body = json.loads(request.body.decode('utf-8'))
+        
         if body['type'] == "match":
             match = Match.objects.filter(id=body['id'])[0]
             match.error = 1
@@ -579,3 +618,6 @@ class ReportAPI(APIView):
             try_obj.save()
 
         return Response(None)
+
+
+

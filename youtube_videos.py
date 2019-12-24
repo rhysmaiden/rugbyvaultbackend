@@ -6,9 +6,9 @@ from oauth2client.tools import argparser
 import pprint
 #import matplotlib.pyplot as pd
 
-# DEVELOPER_KEY = "AIzaSyDt3Y3ZMJ3aiq24lDyo1cga2rgtF6PVhYU"
+DEVELOPER_KEY = "AIzaSyDt3Y3ZMJ3aiq24lDyo1cga2rgtF6PVhYU"
 # DEVELOPER_KEY = "AIzaSyAB3stHsYPoEogXmGGSfxCBzD9zlsh8D3E"
-DEVELOPER_KEY = "AIzaSyDgSdNuzbho-hF1hjADW_OFpWlMp6J4img"
+# DEVELOPER_KEY = "AIzaSyDgSdNuzbho-hF1hjADW_OFpWlMp6J4img"
 
 YOUTUBE_API_SERVICE_NAME = "youtube"
 YOUTUBE_API_VERSION = "v3"
