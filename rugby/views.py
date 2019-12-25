@@ -195,40 +195,45 @@ def youtube_to_embed(original):
 # REST FRAMEWORK
 Highlight = namedtuple('Highlights', ('players', 'matches', 'tries', 'teams'))
 
-
-# class TestView(viewsets.ViewSet):
-#     def list(self, request):
-#         print(request.query_params)
-#         highlights = Highlight(players=Player.objects.all(), matches=Match.objects.all(
-#         ), tries=Try.objects.all(), teams=Team.objects.all())
-
-#         serializer = HighlightSerializer(highlights)
-
-#         return Response(serializer.data)
-
-# class TestView(generics.ListAPIView):
-#     serializer_class = PlayerSerializer
-
-#     def get_queryset(self):
-#         console.log(query_params.get('name', None))
-#         queryset = Player.objects.filter(
-#             self.request.query_params.get('name', None))
-#         return queryset
-
 class Highlights(APIView):
     def get(self, request):
 
         print(
             '{timestamp} -- request started'.format(timestamp=datetime.utcnow().isoformat()))
 
+        league_name = ""
+        league = None
+
+        try:
+            league_name = request.GET.get('league')
+
+            if league_name == "international":
+                league = League.objects.filter(name="International")[0]
+            elif league_name == "superrugby":
+                league = League.objects.filter(name="Super Rugby")[0]
+            elif league_name == "aviva":
+                league = League.objects.filter(name="Aviva Premiership")[0]
+            
+        except:
+            pass
+
         # Recent request
         matches = Match.objects.filter(
-            video_link_found=1, error=0).order_by('-date')[:12]
+            video_link_found=1, error=0).order_by('-date')
+
+        if league_name != None:
+            matches = matches.filter(league_id=league)[:12]
+            
+        else:
+            matches = matches[:12]
+
+
         tries = Try.objects.filter(error=0).order_by('-match__date')[:12]
 
         print(
             '{timestamp} -- obtained data'.format(timestamp=datetime.utcnow().isoformat()))
 
+        
         match_serializer = MatchSerializer(
             matches, many=True)
         try_serializer = TrySerializer(
@@ -496,6 +501,7 @@ class TryProcessingAPI(APIView):
 
         if match_id == 'undefined':
             match_object = Match.objects.filter(match_completely_processed=0,video_link_found=1,error=0,league_id=league).order_by('-date')[0]
+            print(match_object)
         else:
             match_object = Match.objects.filter(id=match_id)[0]
 
