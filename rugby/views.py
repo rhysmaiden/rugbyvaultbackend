@@ -497,10 +497,10 @@ class TryProcessingAPI(APIView):
        
         match_id = request.GET.get('id')
 
-        league = League.objects.filter(name="Super Rugby")[0]
+        league = League.objects.filter(name="Mitre 10")[0]
 
         if match_id == 'undefined':
-            match_object = Match.objects.filter(match_completely_processed=0,video_link_found=1,error=0,league_id=league).order_by('-date')[0]
+            match_object = Match.objects.filter(match_completely_processed=0,video_link_found=1,error=0).exclude(league_id=league).order_by('-date')[0]
             print(match_object)
         else:
             match_object = Match.objects.filter(id=match_id)[0]

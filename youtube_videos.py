@@ -6,9 +6,7 @@ from oauth2client.tools import argparser
 import pprint
 #import matplotlib.pyplot as pd
 
-DEVELOPER_KEY = "AIzaSyDt3Y3ZMJ3aiq24lDyo1cga2rgtF6PVhYU"
-# DEVELOPER_KEY = "AIzaSyAB3stHsYPoEogXmGGSfxCBzD9zlsh8D3E"
-# DEVELOPER_KEY = "AIzaSyDgSdNuzbho-hF1hjADW_OFpWlMp6J4img"
+
 
 YOUTUBE_API_SERVICE_NAME = "youtube"
 YOUTUBE_API_VERSION = "v3"
@@ -19,10 +17,10 @@ class Video:
 
 
 
-def youtube_search(q, max_results=3,order="relevance", token=None, location=None, location_radius=None):
+def youtube_search(q, max_results=3,order="relevance", token=None, location=None, location_radius=None,DEVELOPER_KEY=""):
 
     print("Starting search...")
-
+    print(DEVELOPER_KEY)
 
 
     youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION,developerKey=DEVELOPER_KEY)

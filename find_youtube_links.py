@@ -11,6 +11,8 @@ import time
 import datetime
 from youtube_videos import youtube_search
 from datetime import datetime, timedelta
+from youtube_search import YoutubeSearch
+import json
 # from youtube_search_v2 import search
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "rugby.settings")
@@ -23,7 +25,10 @@ startdate = enddate - timedelta(days=1000)
 
 print(startdate, enddate)
 matches = Match.objects.filter(
-    video_link_found=0, date__range=[startdate, enddate])
+    video_link_found=0).order_by('-date')
+
+DEVELOPER_KEYS = ["AIzaSyDt3Y3ZMJ3aiq24lDyo1cga2rgtF6PVhYU","AIzaSyAB3stHsYPoEogXmGGSfxCBzD9zlsh8D3E","AIzaSyDgSdNuzbho-hF1hjADW_OFpWlMp6J4img"]
+code_index = 0
 
 for match in matches:
 
@@ -33,14 +38,27 @@ for match in matches:
     start_time_period = match.date - timedelta(days=1)
     end_time_period = match.date + timedelta(days=16)
 
+    found_videos = []
 
-    # print(end_time_period)
+    # results = YoutubeSearch(match.home_team.team_name + " v " + match.away_team.team_name + " rugby highlights " + str(match.date.year), max_results=10).to_json()
 
-    # print(match.home_team.team_name + " v " + match.away_team.team_name + " rugby highlights " + str(match.date.year))
+    # json_videos = json.loads(results)["videos"]
 
-    found_videos = youtube_search(
-        match.home_team.team_name + " v " + match.away_team.team_name + " rugby highlights " + str(match.date.year))
+    
 
+    # for vid in json_videos:
+    #     print(vid)
+
+    try:
+        print(DEVELOPER_KEYS[code_index])
+        found_videos = youtube_search(
+        match.home_team.team_name + " v " + match.away_team.team_name + " rugby highlights " + str(match.date.year),DEVELOPER_KEY=DEVELOPER_KEYS[code_index])
+    except Exception as e:
+        print(e)
+        code_index += 1
+        print("Up")
+        if code_index == 3:   
+            break
     
     foundVideo = False
     video_id = ""

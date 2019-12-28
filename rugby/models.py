@@ -86,6 +86,10 @@ class Player(models.Model):
     def __str__(self):
         return self.name + ' - ' + self.team.team_name
 
+    def number_of_tries(self):
+        tries = Try.objects.filter(player=self)
+        return len(tries)
+
 
 class Try(models.Model):
     match = models.ForeignKey(Match, on_delete=models.CASCADE)
