@@ -18,6 +18,10 @@ import json
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "rugby.settings")
 django.setup()
 from rugby.models import Match
+from rugby.models import League
+
+league = League.objects.filter(name="Super Rugby")[0]
+
 
 
 enddate = datetime.today()
@@ -25,7 +29,8 @@ startdate = enddate - timedelta(days=1000)
 
 print(startdate, enddate)
 matches = Match.objects.filter(
-    video_link_found=0).order_by('-date')
+    video_link_found=0,league_id=league).order_by('-date')
+
 
 DEVELOPER_KEYS = ["AIzaSyDt3Y3ZMJ3aiq24lDyo1cga2rgtF6PVhYU","AIzaSyAB3stHsYPoEogXmGGSfxCBzD9zlsh8D3E","AIzaSyDgSdNuzbho-hF1hjADW_OFpWlMp6J4img"]
 code_index = 0
