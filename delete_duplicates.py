@@ -28,7 +28,7 @@ for idm, match in enumerate(matches):
 
         if (match.date.day == n.date.day) and (match.date.month == n.date.month) and (match.date.year == n.date.year):
             if match.home_team == n.home_team:
-                # print(match,n)
+                
       
                 if match.video_link == n.video_link:
                     print("MATCH")
@@ -41,5 +41,9 @@ for idm, match in enumerate(matches):
                             pass
                     else:
                         print("PROCESSED")
+                else:
+                    if n.match_completely_processed == 0:
+                        print("DELETE")
+                        n.delete()
                
                
