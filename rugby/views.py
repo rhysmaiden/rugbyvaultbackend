@@ -501,10 +501,10 @@ class TryProcessingAPI(APIView):
         league_1 = league[0]
         league_2 = league[1]
         league_3 = league[2]
-        league_super = League.objects.filter(name="Super Rugby")[0]
+        league_super = League.objects.filter(name="Pro 14")[0]
 
         if match_id == 'undefined':
-            match_object = Match.objects.filter(match_completely_processed=0,video_link_found=1,error=0,league_id=league_super).exclude(league_id__in=[league_1,league_2,league_3]).order_by('-date')[0]
+            match_object = Match.objects.filter(match_completely_processed=0,video_link_found=1,error=0).exclude(league_id__in=[league_1,league_2,league_3]).order_by('-date')[0]
             print(match_object)
         else:
             match_object = Match.objects.filter(id=match_id)[0]
