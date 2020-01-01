@@ -55,7 +55,7 @@ for match in matches:
     #     print(vid)
 
     try:
-        print(DEVELOPER_KEYS[code_index])
+        # print(DEVELOPER_KEYS[code_index])
         found_videos = youtube_search(
         match.home_team.team_name + " v " + match.away_team.team_name + " rugby highlights " + str(match.date.year),DEVELOPER_KEY=DEVELOPER_KEYS[code_index])
     except Exception as e:

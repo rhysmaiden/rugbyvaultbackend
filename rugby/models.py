@@ -66,7 +66,7 @@ class Match(models.Model):
         return len(ratings)
 
     def __str__(self):
-        return str(self.home_team.team_name) + " vs " + str(self.away_team.team_name) + " - " + str(self.date.date()) + " (" + str(self.match_completely_processed) + ")"
+        return str(self.home_team.team_name) + " vs " + str(self.away_team.team_name) + " - " + str(self.date.date()) + " (" + str(self.match_completely_processed) + ")" + " - Error: " + str(self.error)
 
 
 class PlayerManager(models.Manager):

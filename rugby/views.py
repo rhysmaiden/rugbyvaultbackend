@@ -501,7 +501,7 @@ class TryProcessingAPI(APIView):
         league_1 = league[0]
         league_2 = league[1]
         league_3 = league[2]
-        league_super = League.objects.filter(name="Pro 14")[0]
+        league_super = League.objects.filter(name="International")[0]
 
         if match_id == 'undefined':
             match_object = Match.objects.filter(match_completely_processed=0,video_link_found=1,error=0).exclude(league_id__in=[league_1,league_2,league_3]).order_by('-date')[0]
@@ -531,6 +531,8 @@ class TryProcessingAPI(APIView):
                 
                 game_index = int(index/2)
                 break
+
+        
         
         game = games[game_index]
 
