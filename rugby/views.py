@@ -497,14 +497,15 @@ class TryProcessingAPI(APIView):
        
         match_id = request.GET.get('id')
 
-        league = League.objects.filter(name__in=["Mitre 10","USA","Top 14"])
+        league = League.objects.filter(name__in=["Mitre 10","USA","Top 14","Aviva Premiership"])
         league_1 = league[0]
         league_2 = league[1]
         league_3 = league[2]
+        league_4 = league[3]
         league_super = League.objects.filter(name="International")[0]
 
         if match_id == 'undefined':
-            match_object = Match.objects.filter(match_completely_processed=0,video_link_found=1,error=0).exclude(league_id__in=[league_1,league_2,league_3]).order_by('-date')[0]
+            match_object = Match.objects.filter(match_completely_processed=0,video_link_found=1,error=0,league_id=league_super).exclude(league_id__in=[league_2,league_3,league_4]).order_by('-date')[0]
             print(match_object)
         else:
             match_object = Match.objects.filter(id=match_id)[0]

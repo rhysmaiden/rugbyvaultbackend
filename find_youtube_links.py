@@ -20,7 +20,7 @@ django.setup()
 from rugby.models import Match
 from rugby.models import League
 
-league = League.objects.filter(name="International")[0]
+league = League.objects.filter(name="Pro 14")[0]
 
 
 
