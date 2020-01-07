@@ -90,6 +90,10 @@ class Player(models.Model):
         tries = Try.objects.filter(player=self)
         return len(tries)
 
+    def number_of_int_tries(self):
+        tries = Try.objects.filter(player=self,match__league_id=League.objects.filter(name="International")[0])
+        return len(tries)
+
 
 class Try(models.Model):
     match = models.ForeignKey(Match, on_delete=models.CASCADE)

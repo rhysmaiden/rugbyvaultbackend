@@ -17,7 +17,7 @@ from rugby.models import Try
 from rugby.models import League
 import youtube_dl, subprocess
 
-PLAYER_NAME = "Sevu Reece"
+PLAYER_NAME = "Cheslin Kolbe"
 
 
 league_object = League.objects.filter(name="International")[0]
@@ -28,16 +28,18 @@ player_tries = Try.objects.filter(player=player_object).filter(match__date__year
 
 print(len(player_tries))
 
-if not os.path.exists(player_object.name):
-    os.mkdir(player_object.name)
+if not os.path.exists("/Users/rhysmaiden/Documents/" + player_object.name):
+    os.mkdir("/Users/rhysmaiden/Documents/" + player_object.name)
+
+
 
 for index,try_object in enumerate(player_tries):
 
 
     URL = try_object.match.video_link
-    FROM = str(datetime.timedelta(seconds=try_object.start_time))
+    FROM = str(datetime.timedelta(seconds=try_object.start_time - 5))
     TO = str(datetime.timedelta(seconds=try_object.end_time))
-    TARGET = try_object.player.name + "/" + try_object.player.name.replace(" ","") + str(index) + ".mp4"
+    TARGET = "/Users/rhysmaiden/Documents/" + try_object.player.name + "/" + try_object.player.name.replace(" ","") + str(index) + ".mp4"
     print(TARGET)
     with youtube_dl.YoutubeDL({'format': 'best'}) as ydl:
         result = ydl.extract_info(URL, download=False)
@@ -58,15 +60,15 @@ for index,try_object in enumerate(player_tries):
 
 
 
-with open(player_object.name + "/tries.txt",'w') as textFile:
-    for filename in os.listdir(player_object.name):
-        # print("Cheslin Kolbe/" + filename + "\n")
-        if "mp4" in filename:
-            textFile.write("file '" + filename + "'\n")
+# with open(player_object.name + "/tries.txt",'w') as textFile:
+#     for filename in os.listdir(player_object.name):
+#         # print("/Users/rhysmaiden/Documents/Cheslin Kolbe/" + filename + "\n")
+#         if "mp4" in filename:
+#             textFile.write("file '" + filename + "'\n")
 
 
 
-command = 'ffmpeg -f concat -safe 0 -i "' + player_object.name + '/tries.txt" -c copy "' + player_object.name + '/output.mp4"'
-print(command)
+# command = 'ffmpeg -f concat -safe 0 -i "' + player_object.name + '/tries.txt" -c copy "' + player_object.name + '/output.mp4"'
+# print(command)
 
-subprocess.call(command,shell=True)
+# subprocess.call(command,shell=True)

@@ -9,7 +9,7 @@ from.models import League
 class PlayerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Player
-        fields = '__all__'
+        fields = ('id','name','team','internation_team','number_of_tries','number_of_int_tries')
 
 
 class TeamSerializer(serializers.ModelSerializer):

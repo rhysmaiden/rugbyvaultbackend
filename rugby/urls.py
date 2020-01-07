@@ -26,7 +26,7 @@ from rest_framework.urlpatterns import format_suffix_patterns
 urlpatterns = [
     # url(r'^$', views.index, name='index'),
     url(r'^admin/', admin.site.urls),
-    url(r'^tryprocessing/$', views.tryprocessing, name='tryprocessing'),
+    # url(r'^tryprocessing/$', views.tryprocessing, name='tryprocessing'),
     # url(r'^team/(?P<pk>[0-9]+)/$',
     #     TeamView.as_view(template_name="rugby/home.html")),
     # url(r'^player/(?P<pk>[0-9]+)/$',
@@ -47,6 +47,7 @@ urlpatterns = [
     url(r'^report/', views.ReportAPI.as_view()),
     url(r'^processing/', views.TryProcessingAPI.as_view()),
     url(r'^addtry/', views.AddTryAPI.as_view()),
+    url(r'^matches/', views.MatchesAPI.as_view()),
     
 
 

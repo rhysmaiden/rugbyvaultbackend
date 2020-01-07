@@ -82,106 +82,6 @@ def make_soup(url):
 	
     return True
 
-
-@csrf_exempt
-def tryprocessing(request):
-
-    my_context = {
-        "match": [],
-        "tries": [],
-        "video_link": [],
-        "players": [],
-        "amount": [],
-        "page": "",
-        "try_count": ""
-    }
-
-    my_context["amount"] = len(Match.objects.filter(
-        video_link_found=1, match_completely_processed=0, error=0))
-    my_context["try_count"] = len(Try.objects.all())
-
-    tries = Try.objects.all()
-
-    aviva_league = League.objects.filter(name="Aviva Premiership")[0]
-    pro_league = League.objects.filter(name="Pro 14")[0]
-    super_league = League.objects.filter(name="Super Rugby")[0]
-    international_league = League.objects.filter(name="International")[0]
-
-    # Get the latest match
-    latest_match = Match.objects.filter(
-        video_link_found=1, match_completely_processed=0, error=0).order_by('-date')[0]
-    my_context["match"] = latest_match
-
-    if request.method == "POST":
-
-        if "finished" in request.POST:
-            latest_match.match_completely_processed = 1
-            latest_match.save()
-        elif "error" in request.POST:
-            latest_match.error = 1
-            latest_match.save()
-        else:
-            player_name = request.POST['player_name']
-            start_time_minute = request.POST['start_time_minute']
-            start_time_second = request.POST['start_time_second']
-            end_time_minute = request.POST['end_time_minute']
-            end_time_second = request.POST['end_time_second']
-            team_id = int(request.POST['team_id'])
-
-            start_time = minutes_and_seconds_to_seconds(
-                int(start_time_minute), int(start_time_second))
-            end_time = minutes_and_seconds_to_seconds(
-                int(end_time_minute), int(end_time_second))
-            new_link = add_times_to_video_link(
-                latest_match.video_link, start_time, end_time)
-
-            try_scorer_object = Player.objects.filter(name=player_name)[0]
-            team_from_id = Team.objects.filter(id=team_id)[0]
-
-            try_object = Try(match=latest_match, player=try_scorer_object, video_link=new_link,
-                             start_time=start_time, end_time=end_time, team=team_from_id)
-
-            if int(team_id) < 63 and int(team_id) > 44:
-                try_scorer_object.internation_team = team_from_id
-                try_scorer_object.save()
-
-            try_object.save()
-
-            return HttpResponse('success')
-
-        return render(request, 'rugby/tryprocessing.html', {})
-
-    else:
-
-        my_context["players"] = Player.objects.all()
-
-        if "embed" not in latest_match.video_link:
-            print(latest_match.video_link)
-            my_context["video_link"] = "https://www.youtube.com/embed/" + \
-                latest_match.video_link.split("=")[1] + "?rel=0"
-        else:
-            my_context["video_link"] = latest_match.video_link + "?rel=0"
-
-        return render(request, 'rugby/tryprocessing.html', my_context)
-
-
-def minutes_and_seconds_to_seconds(minutes, seconds):
-
-    seconds_from_minutes = minutes * 60
-    return seconds + seconds_from_minutes
-
-
-def add_times_to_video_link(video_link, start_time, end_time):
-    try:
-        link = "https://www.youtube.com/embed/" + \
-            video_link.split("=")[1] + "?start=" + \
-            str(start_time) + "&end=" + str(end_time) + ";rel=0"
-    except:
-        return video_link
-
-    return link
-
-
 def youtube_to_embed(original):
     print(original)
 
@@ -190,6 +90,70 @@ def youtube_to_embed(original):
 
     embedded = "https://www.youtube.com/embed/" + original.split("=")[1]
     return embedded
+
+def query_year_for_matches(matches,yearsParam):
+    return
+
+def query_year_for_tries(tries,yearsParam):
+    if yearsParam[0] != "all":
+        yearsParam = [ int(x) for x in yearsParam ]
+        tries = tries.filter(match__date__year__in=yearsParam)
+    
+    return tries
+
+def query_team_for_matches(matches,teamsParam):
+    return []
+
+def query_team_for_tries(tries,teamsParam):
+    if teamsParam[0] != "all":
+        teams = Team.objects.filter(team_name__in=teamsParam)
+        tries = tries.filter(Q(match__home_team__in=teams) | Q(match__away_team__in=teams))
+
+    return tries
+
+def filter_year_for_matches(matches,yearsParam):
+    pass
+
+def filter_year_for_tries(tries,yearsParam):
+
+    yearsFilter = []
+    
+    if yearsParam[0] == "all":
+        dates = [d.year for d in tries.datetimes('match__date', 'year')]
+        
+        for year in dates:
+            yearsFilter.append({"value":year,"checked":False})
+    else:
+        for year in yearsParam:
+            yearsFilter.append({"value":year,"checked":True})
+
+    return yearsFilter
+
+def filter_team_for_matches(matches,teamsParam):
+    return []
+
+def filter_team_for_tries(tries,teamsParam):
+    teamsFilter = []
+
+    if teamsParam[0] == "all":
+        teams = set(tries.values_list('match__home_team__team_name',flat=True).distinct())
+        teams = teams | set(tries.values_list('match__away_team__team_name',flat=True).distinct())
+
+        for t in teams:
+            teamsFilter.append({"value":t,"checked":False})
+    else:
+        teams = set(tries.values_list('match__home_team__team_name',flat=True).distinct())
+        print(teams)
+        teams = teams | set(tries.values_list('match__away_team__team_name',flat=True).distinct())
+
+        for t in teams:
+            
+            if t not in teamsParam:
+                teamsFilter.append({"value":t,"checked":False})
+            else:
+                teamsFilter.append({"value":t,"checked":True})
+
+    return teamsFilter       
 
 
 # REST FRAMEWORK
@@ -253,31 +217,35 @@ class PlayerAPI(APIView):
 
         player_id = request.GET.get('id')
         order = request.GET.get('order')
-
-        print(player_id)
+        yearsParam = request.GET.get('year').split(",")
+        teamsParam = request.GET.get('team').split(",")
 
         player = Player.objects.filter(id=player_id)[0]
+        tries = Try.objects.filter(player=player)
 
-        teams = Team.objects.filter(
-            id__in=[player.team.id, player.internation_team.id])
+        #Filter information for querying database
+        tries = query_year_for_tries(tries,yearsParam)    
+        tries = query_team_for_tries(tries,teamsParam)
 
-        tries = Try.objects.filter(
-            player=player_id, error=0)
+        # Filter information for front end
+        yearsFilter = filter_year_for_tries(tries,yearsParam)
+        teamsFilter = filter_team_for_tries(tries,teamsParam)
 
+        # Ordering
         if order == "date":
             tries = tries.order_by('-match__date')
         elif order == "rating":
             tries = sorted(tries, key=lambda x: x.avg_rating(), reverse=True)
-            # tries.order_by('-avg_rating')
 
+        #Serializing
         try_serializer = TrySerializer(tries, many=True)
         player_serializer = PlayerSerializer(player, many=False)
-        team_serializer = TeamSerializer(teams, many=True)
 
         return Response({
             "player": player_serializer.data,
-            "teams": team_serializer.data,
-            "tries": try_serializer.data
+            "tries": try_serializer.data,
+            "yearFilter": yearsFilter,
+            "teamFilter": teamsFilter
         })
 
 
@@ -300,12 +268,15 @@ class TeamAPI(APIView):
 
         if order == "date":
             matches = matches.order_by('-date')
-            tries = tries.order_by('-match__date')[:12]
+            tries = tries.order_by('-match__date')
         elif order == "rating":
             matches = sorted(
                 matches, key=lambda x: x.avg_rating(), reverse=True)
             tries = sorted(tries, key=lambda x: x.avg_rating(),
-                           reverse=True)[:12]
+                           reverse=True)
+
+        matches = matches[:18]
+        tries = tries[:18]
 
         team_serializer = TeamSerializer(team, many=False)
         player_serializer = PlayerSerializer(players, many=True)
@@ -502,10 +473,10 @@ class TryProcessingAPI(APIView):
         league_2 = league[1]
         league_3 = league[2]
         league_4 = league[3]
-        league_super = League.objects.filter(name="International")[0]
+        league_super = League.objects.filter(name="Super Rugby")[0]
 
         if match_id == 'undefined':
-            match_object = Match.objects.filter(match_completely_processed=0,video_link_found=1,error=0,league_id=league_super).exclude(league_id__in=[league_2,league_3,league_4]).order_by('-date')[0]
+            match_object = Match.objects.filter(match_completely_processed=0,video_link_found=1,error=0,league_id=league_superchr ).exclude(league_id__in=[league_2,league_3,league_4]).order_by('-date')[0]
             print(match_object)
         else:
             match_object = Match.objects.filter(id=match_id)[0]
@@ -633,6 +604,50 @@ class ReportAPI(APIView):
             try_obj.save()
 
         return Response(None)
+
+class MatchesAPI(APIView):
+    def get(self, request):
+
+        order = request.GET.get('order')
+
+        matches = Match.objects.all()
+
+        yearsFilter = request.GET.get('year').split(",")
+        teamsFilter = request.GET.get('team').split(",")
+
+        if yearsFilter[0] != "all":
+            yearsFilterFilter = [ int(x) for x in yearsFilter ]
+            matches = matches.filter(
+            date__year__in=yearsFilter)
+
+        if teamsFilter[0] != "all":
+            teams = Team.objects.filter(team_name__in=teamsFilter)
+            matches = matches.filter(Q(home_team__in=teams) | Q(away_team__in=teams))
+
+        if order == "date":
+            matches = matches.order_by('-date')
+         
+        elif order == "rating":
+            matches = sorted(
+                matches, key=lambda x: x.avg_rating(), reverse=True)
+
+        teams = Team.objects.all()
+        leagues = League.objects.all()
+
+        matches = matches[:18]
+
+        match_serializer = MatchSerializer(matches, many=True)
+        team_serializer = TeamSerializer(teams, many=True)
+        
+        
+
+        
+      
+
+        return Response({
+            "matches": match_serializer.data,
+            "teams": team_serializer.data
+        })
 
 
 
