@@ -92,7 +92,11 @@ def youtube_to_embed(original):
     return embedded
 
 def query_year_for_matches(matches,yearsParam):
-    return
+    if yearsParam[0] != "all":
+        yearsParam = [ int(x) for x in yearsParam ]
+        matches = matches.filter(date__year__in=yearsParam)
+    
+    return matches
 
 def query_year_for_tries(tries,yearsParam):
     if yearsParam[0] != "all":
@@ -102,7 +106,11 @@ def query_year_for_tries(tries,yearsParam):
     return tries
 
 def query_team_for_matches(matches,teamsParam):
-    return []
+    if teamsParam[0] != "all":
+        teams = Team.objects.filter(team_name__in=teamsParam)
+        matches = matches.filter(Q(home_team__in=teams) | Q(away_team__in=teams))
+
+    return matches
 
 def query_team_for_tries(tries,teamsParam):
     if teamsParam[0] != "all":
@@ -112,7 +120,19 @@ def query_team_for_tries(tries,teamsParam):
     return tries
 
 def filter_year_for_matches(matches,yearsParam):
-    pass
+    
+    yearsFilter = []
+    
+    if yearsParam[0] == "all":
+        dates = [d.year for d in matches.datetimes('date', 'year')]
+        
+        for year in dates:
+            yearsFilter.append({"value":year,"checked":False})
+    else:
+        for year in yearsParam:
+            yearsFilter.append({"value":year,"checked":True})
+
+    return yearsFilter
 
 def filter_year_for_tries(tries,yearsParam):
 
@@ -130,7 +150,27 @@ def filter_year_for_tries(tries,yearsParam):
     return yearsFilter
 
 def filter_team_for_matches(matches,teamsParam):
-    return []
+    teamsFilter = []
+
+    if teamsParam[0] == "all":
+        teams = set(matches.values_list('home_team__team_name',flat=True).distinct())
+        teams = teams | set(matches.values_list('away_team__team_name',flat=True).distinct())
+
+        for t in teams:
+            teamsFilter.append({"value":t,"checked":False})
+    else:
+        teams = set(matches.values_list('home_team__team_name',flat=True).distinct())
+        teams = teams | set(matches.values_list('away_team__team_name',flat=True).distinct())
+
+        for t in teams:
+            
+            if t not in teamsParam:
+                teamsFilter.append({"value":t,"checked":False})
+            else:
+                teamsFilter.append({"value":t,"checked":True})
+
+    return teamsFilter       
+
 
 def filter_team_for_tries(tries,teamsParam):
     teamsFilter = []
@@ -255,39 +295,40 @@ class TeamAPI(APIView):
         team_id = request.GET.get('id')
         order = request.GET.get('order')
 
+        yearsParam = request.GET.get('year').split(",")
+        teamsParam = request.GET.get('team').split(",")
         team = Team.objects.filter(id=team_id)[0]
 
-        players = Player.objects.filter(
-            Q(team=team) | Q(internation_team=team))
+        matches = Match.objects.filter(Q(
+            home_team=team) | Q(away_team=team)).filter(error=0)
 
-        matches = Match.objects.filter(Q(home_team=team) | Q(
-            away_team=team)).filter(error=0, video_link_found=1)
+        print(len(matches))
 
-        tries = Try.objects.filter(
-            team=team, error=0)
-
+        # Ordering
         if order == "date":
             matches = matches.order_by('-date')
-            tries = tries.order_by('-match__date')
         elif order == "rating":
-            matches = sorted(
-                matches, key=lambda x: x.avg_rating(), reverse=True)
-            tries = sorted(tries, key=lambda x: x.avg_rating(),
-                           reverse=True)
+            matches = sorted(matches, key=lambda x: x.avg_rating(), reverse=True)
 
+
+        #Filter information for querying database
+        matches = query_year_for_matches(matches,yearsParam)    
+        matches = query_team_for_matches(matches,teamsParam)
+
+        # Filter information for front end
+        yearsFilter = filter_year_for_matches(matches,yearsParam)
+        teamsFilter = filter_team_for_matches(matches,teamsParam)
+
+        
         matches = matches[:18]
-        tries = tries[:18]
-
-        team_serializer = TeamSerializer(team, many=False)
-        player_serializer = PlayerSerializer(players, many=True)
-        match_serializer = MatchSerializer(matches, many=True)
-        try_serializer = TrySerializer(tries, many=True)
+        #Serializing
+        match_serializer = MatchSerializer(matches,many=True)
+        
 
         return Response({
-            "team": team_serializer.data,
-            "players": player_serializer.data,
             "matches": match_serializer.data,
-            "tries": try_serializer.data
+            "yearFilter": yearsFilter,
+            "teamFilter": teamsFilter
         })
 
 
@@ -609,45 +650,39 @@ class MatchesAPI(APIView):
     def get(self, request):
 
         order = request.GET.get('order')
+        yearsParam = request.GET.get('year').split(",")
+        teamsParam = request.GET.get('team').split(",")
 
-        matches = Match.objects.all()
+        matches = Match.objects.filter(error=0)
 
-        yearsFilter = request.GET.get('year').split(",")
-        teamsFilter = request.GET.get('team').split(",")
-
-        if yearsFilter[0] != "all":
-            yearsFilterFilter = [ int(x) for x in yearsFilter ]
-            matches = matches.filter(
-            date__year__in=yearsFilter)
-
-        if teamsFilter[0] != "all":
-            teams = Team.objects.filter(team_name__in=teamsFilter)
-            matches = matches.filter(Q(home_team__in=teams) | Q(away_team__in=teams))
-
+        # Ordering
         if order == "date":
             matches = matches.order_by('-date')
-         
         elif order == "rating":
-            matches = sorted(
-                matches, key=lambda x: x.avg_rating(), reverse=True)
+            matches = sorted(matches, key=lambda x: x.avg_rating(), reverse=True)
 
-        teams = Team.objects.all()
-        leagues = League.objects.all()
 
+        #Filter information for querying database
+        matches = query_year_for_matches(matches,yearsParam)    
+        matches = query_team_for_matches(matches,teamsParam)
+
+        # Filter information for front end
+        yearsFilter = filter_year_for_matches(matches,yearsParam)
+        teamsFilter = filter_team_for_matches(matches,teamsParam)
+
+        
         matches = matches[:18]
-
-        match_serializer = MatchSerializer(matches, many=True)
-        team_serializer = TeamSerializer(teams, many=True)
+        #Serializing
+        match_serializer = MatchSerializer(matches,many=True)
         
-        
-
-        
-      
 
         return Response({
             "matches": match_serializer.data,
-            "teams": team_serializer.data
+            "yearFilter": yearsFilter,
+            "teamFilter": teamsFilter
         })
+
+        
 
 
 
