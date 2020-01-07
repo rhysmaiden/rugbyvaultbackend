@@ -26,6 +26,7 @@ from.models import Try
 from.models import League
 from.models import MatchRating
 from.models import TryRating
+import math
 
 import re
 
@@ -650,6 +651,7 @@ class MatchesAPI(APIView):
     def get(self, request):
 
         order = request.GET.get('order')
+        pageNumber = int(request.GET.get('page'))
         yearsParam = request.GET.get('year').split(",")
         teamsParam = request.GET.get('team').split(",")
 
@@ -659,6 +661,7 @@ class MatchesAPI(APIView):
         if order == "date":
             matches = matches.order_by('-date')
         elif order == "rating":
+            # TODO: This query makes it a list instead of a queryset which doesn't allow future filtering
             matches = sorted(matches, key=lambda x: x.avg_rating(), reverse=True)
 
 
@@ -670,8 +673,14 @@ class MatchesAPI(APIView):
         yearsFilter = filter_year_for_matches(matches,yearsParam)
         teamsFilter = filter_team_for_matches(matches,teamsParam)
 
-        
-        matches = matches[:18]
+        pageCount = math.ceil(len(matches)/24)
+
+        startIndex = (pageNumber - 1) * 24
+        endIndex = startIndex + 24
+        matches = matches[startIndex:endIndex]
+
+
+
         #Serializing
         match_serializer = MatchSerializer(matches,many=True)
         
@@ -679,7 +688,8 @@ class MatchesAPI(APIView):
         return Response({
             "matches": match_serializer.data,
             "yearFilter": yearsFilter,
-            "teamFilter": teamsFilter
+            "teamFilter": teamsFilter,
+            "pageCount": pageCount
         })
 
         
