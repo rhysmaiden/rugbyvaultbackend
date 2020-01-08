@@ -260,6 +260,7 @@ class PlayerAPI(APIView):
         order = request.GET.get('order')
         yearsParam = request.GET.get('year').split(",")
         teamsParam = request.GET.get('team').split(",")
+        pageNumber = int(request.GET.get('page'))
 
         player = Player.objects.filter(id=player_id)[0]
         tries = Try.objects.filter(player=player)
@@ -278,6 +279,12 @@ class PlayerAPI(APIView):
         elif order == "rating":
             tries = sorted(tries, key=lambda x: x.avg_rating(), reverse=True)
 
+        pageCount = math.ceil(len(tries)/24)
+
+        startIndex = (pageNumber - 1) * 24
+        endIndex = startIndex + 24
+        tries = tries[startIndex:endIndex]
+
         #Serializing
         try_serializer = TrySerializer(tries, many=True)
         player_serializer = PlayerSerializer(player, many=False)
@@ -286,7 +293,8 @@ class PlayerAPI(APIView):
             "player": player_serializer.data,
             "tries": try_serializer.data,
             "yearFilter": yearsFilter,
-            "teamFilter": teamsFilter
+            "teamFilter": teamsFilter,
+            "pageCount": pageCount
         })
 
 
@@ -295,6 +303,7 @@ class TeamAPI(APIView):
 
         team_id = request.GET.get('id')
         order = request.GET.get('order')
+        pageNumber = int(request.GET.get('page'))
 
         yearsParam = request.GET.get('year').split(",")
         teamsParam = request.GET.get('team').split(",")
@@ -320,8 +329,12 @@ class TeamAPI(APIView):
         yearsFilter = filter_year_for_matches(matches,yearsParam)
         teamsFilter = filter_team_for_matches(matches,teamsParam)
 
-        
-        matches = matches[:18]
+        pageCount = math.ceil(len(matches)/24)
+
+        startIndex = (pageNumber - 1) * 24
+        endIndex = startIndex + 24
+        matches = matches[startIndex:endIndex]
+
         #Serializing
         match_serializer = MatchSerializer(matches,many=True)
         
@@ -329,7 +342,8 @@ class TeamAPI(APIView):
         return Response({
             "matches": match_serializer.data,
             "yearFilter": yearsFilter,
-            "teamFilter": teamsFilter
+            "teamFilter": teamsFilter,
+            "pageCount": pageCount
         })
 
 
