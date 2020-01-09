@@ -48,6 +48,7 @@ urlpatterns = [
     url(r'^processing/', views.TryProcessingAPI.as_view()),
     url(r'^addtry/', views.AddTryAPI.as_view()),
     url(r'^matches/', views.MatchesAPI.as_view()),
+    url(r'^tries/', views.TriesAPI.as_view()),
     
 
 

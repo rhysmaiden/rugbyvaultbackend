@@ -40,7 +40,7 @@ class Match(models.Model):
     video_link = models.TextField()
     league = models.TextField(default='super')
     league_id = models.ForeignKey(League, on_delete=models.CASCADE)
-
+    ratings_average = models.FloatField(default=0)
     tries_created = models.IntegerField(default=0)
 
     video_link_found = models.IntegerField(default=0)
@@ -57,6 +57,9 @@ class Match(models.Model):
             sum += rating.rating
 
         if len(ratings) > 0:
+            ave = sum/len(ratings)
+            self.ratings_average = ave
+            self.save()
             return round(sum/len(ratings), 2)
         else:
             return 0
@@ -101,10 +104,10 @@ class Try(models.Model):
     team = models.ForeignKey('Team', on_delete=models.CASCADE, default=60)
     video_link = models.TextField()
     viewcount = models.IntegerField(default=1)
-    ratings_average = models.IntegerField(default=2)
+   
     start_time = models.IntegerField(default=0)
     end_time = models.IntegerField(default=0)
-    ratings_average = models.IntegerField(default=0)
+    ratings_average = models.FloatField(default=0)
     minute = models.IntegerField(default=0)
     error = models.IntegerField(default=0)
 
@@ -115,8 +118,12 @@ class Try(models.Model):
             sum += rating.rating
 
         if len(ratings) > 0:
+            ave = sum/len(ratings)
+            self.ratings_average = ave
+            self.save()
             return round(sum/len(ratings), 2)
         else:
+            self.ratings_average = 0
             return 0
 
     def rating_count(self):

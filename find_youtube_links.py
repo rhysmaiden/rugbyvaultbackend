@@ -29,7 +29,7 @@ startdate = enddate - timedelta(days=1000)
 
 print(startdate, enddate)
 matches = Match.objects.filter(
-    video_link_found=0,league_id=league).order_by('-date')
+    video_link_found=0).order_by('-date')
 
 
 DEVELOPER_KEYS = ["AIzaSyDt3Y3ZMJ3aiq24lDyo1cga2rgtF6PVhYU","AIzaSyAB3stHsYPoEogXmGGSfxCBzD9zlsh8D3E","AIzaSyDgSdNuzbho-hF1hjADW_OFpWlMp6J4img"]
