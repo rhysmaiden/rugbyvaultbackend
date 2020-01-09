@@ -776,14 +776,13 @@ class MatchesAPI(APIView):
 		yearsFilter = filter_year_for_matches(matches,yearsParam)
 		teamsFilter = filter_team_for_matches(matches,teamsParam)
 		leaguesFilter = filter_league_for_matches(matches,leaguesParam)
+		print(leaguesFilter)
 
 		pageCount = math.ceil(len(matches)/24)
 
 		startIndex = (pageNumber - 1) * 24
 		endIndex = startIndex + 24
 		matches = matches[startIndex:endIndex]
-
-
 
 		#Serializing
 		match_serializer = MatchSerializer(matches,many=True)
