@@ -251,10 +251,12 @@ class Highlights(APIView):
 			'{timestamp} -- request started'.format(timestamp=datetime.utcnow().isoformat()))
 
 		league_name = ""
+		league_try_name = ""
 		league = None
+		try_league = None
 
 		try:
-			league_name = request.GET.get('league')
+			league_name = request.GET.get('league_match')
 
 			if league_name == "international":
 				league = League.objects.filter(name="International")[0]
@@ -272,18 +274,43 @@ class Highlights(APIView):
 		except:
 			pass
 
+		try:
+			league_try_name = request.GET.get('league_try')
+
+			if league_try_name == "international":
+				try_league = League.objects.filter(name="International")[0]
+			elif league_try_name == "superrugby":
+				try_league = League.objects.filter(name="Super Rugby")[0]
+			elif league_try_name == "aviva":
+				try_league = League.objects.filter(name="Aviva Premiership")[0]
+			elif league_try_name == "pro14":
+				try_league = League.objects.filter(name="Pro 14")[0]
+			elif league_try_name == "usa":
+				try_league = League.objects.filter(name="USA")[0]
+			elif league_try_name == "mitre10":
+				try_league = League.objects.filter(name="Mitre 10")[0]
+			
+		except:
+			pass
+
 		# Recent request
 		matches = Match.objects.filter(
 			video_link_found=1, error=0).order_by('-date')
 
-		if league_name != None:
+		if league_name != "all":
 			matches = matches.filter(league_id=league)[:12]
 			
 		else:
 			matches = matches[:12]
 
 
-		tries = Try.objects.filter(error=0).order_by('-match__date')[:12]
+		tries = Try.objects.filter(error=0).order_by('-match__date')
+
+		if league_try_name != "all":
+			tries = tries.filter(match__league_id=try_league)[:12]
+			
+		else:
+			tries = tries[:12]
 
 		print(
 			'{timestamp} -- obtained data'.format(timestamp=datetime.utcnow().isoformat()))
