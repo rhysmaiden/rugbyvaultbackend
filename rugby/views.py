@@ -142,7 +142,7 @@ def filter_year_for_matches(matches,yearsParam):
 	if yearsParam[0] == "all":
 		dates = [d.year for d in matches.datetimes('date', 'year')]
 		
-		for year in dates:
+		for year in reversed(dates):
 			yearsFilter.append({"value":year,"checked":False})
 	else:
 		for year in yearsParam:
@@ -157,7 +157,7 @@ def filter_year_for_tries(tries,yearsParam):
 	if yearsParam[0] == "all":
 		dates = [d.year for d in tries.datetimes('match__date', 'year')]
 		
-		for year in dates:
+		for year in reversed(dates):
 			yearsFilter.append({"value":year,"checked":False})
 	else:
 		for year in yearsParam:
