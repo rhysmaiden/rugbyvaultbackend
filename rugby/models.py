@@ -137,10 +137,9 @@ class Try(models.Model):
 class MatchRating(models.Model):
     match = models.ForeignKey(Match, on_delete=models.CASCADE)
     rating = models.IntegerField()
-    userId = models.TextField()
 
 
 class TryRating(models.Model):
     try_obj = models.ForeignKey(Try, on_delete=models.CASCADE)
     rating = models.IntegerField()
-    userId = models.TextField()
+

@@ -507,27 +507,20 @@ class RatingAPI(APIView):
 	def post(self, request):
 
 		body = json.loads(request.body.decode('utf-8'))
-		print(body)
+		
 		if request.GET.get('type') == "match":
-			match = MatchRating.objects.filter(
-				userId=body['googleId'], match=body['id'])
-			if len(match) == 0:
-				newrating = MatchRating(
-					userId=body['googleId'], match=Match.objects.filter(id=body['id'])[0], rating=body['rating'])
-				newrating.save()
-			else:
-				match[0].rating = body['rating']
-				match[0].save()
+			
+			
+			newrating = MatchRating(
+				match=Match.objects.filter(id=body['id'])[0], rating=body['rating'])
+			newrating.save()
+			
 		elif request.GET.get('type') == "try":
-			try_obj = TryRating.objects.filter(
-				userId=body['googleId'], try_obj=body['id'])
-			if len(try_obj) == 0:
-				newrating = TryRating(
-					userId=body['googleId'], try_obj=Try.objects.filter(id=body['id'])[0], rating=body['rating'])
-				newrating.save()
-			else:
-				try_obj[0].rating = body['rating']
-				try_obj[0].save()
+			
+			newrating = TryRating(
+				try_obj=Try.objects.filter(id=body['id'])[0], rating=body['rating'])
+			newrating.save()
+			
 
 		return Response(None)
 
