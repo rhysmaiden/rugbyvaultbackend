@@ -147,5 +147,5 @@ class TryRating(models.Model):
     rating = models.IntegerField()
 
     def __str__(self):
-        return self.try_obj + ' - ' + self.rating
+        return str(self.try_obj) + ' - ' + str(self.rating)
 
