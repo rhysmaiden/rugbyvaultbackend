@@ -5,6 +5,7 @@ from rugby.models import Try
 from rugby.models import Team
 from rugby.models import League
 from rugby.models import MatchRating
+from rugby.models import TryRating
 
 
 class TryAdmin(admin.ModelAdmin):
@@ -24,6 +25,7 @@ class PlayerAdmin(admin.ModelAdmin):
 admin.site.register(Match, MatchAdmin)
 admin.site.register(Team)
 admin.site.register(MatchRating)
+admin.site.register(TryRating)
 admin.site.register(Player, PlayerAdmin)
 admin.site.register(League)
 admin.site.register(Try, TryAdmin)
