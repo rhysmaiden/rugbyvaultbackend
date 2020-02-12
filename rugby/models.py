@@ -138,8 +138,14 @@ class MatchRating(models.Model):
     match = models.ForeignKey(Match, on_delete=models.CASCADE)
     rating = models.IntegerField()
 
+    def __str__(self):
+        return self.match + ' - ' + self.rating
+
 
 class TryRating(models.Model):
     try_obj = models.ForeignKey(Try, on_delete=models.CASCADE)
     rating = models.IntegerField()
+
+    def __str__(self):
+        return self.try_obj + ' - ' + self.rating
 
