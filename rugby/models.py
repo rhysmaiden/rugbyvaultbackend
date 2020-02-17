@@ -17,13 +17,8 @@ class League(models.Model):
 
 class Team(models.Model):
     team_name = models.TextField()
-    league = models.TextField(default='super')
     league_id = models.ForeignKey(League, on_delete=models.CASCADE, default=1)
-    nationality = models.ForeignKey(
-        'self', on_delete=models.CASCADE, default=2)
-    logo = models.TextField()
-    primary_colour = models.TextField(default='#000000')
-    secondary_colour = models.TextField(default='#FFFFFF')
+
 
     def __str__(self):
         return self.team_name + "-" + str(self.id)
