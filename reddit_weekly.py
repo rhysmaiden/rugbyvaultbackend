@@ -20,11 +20,11 @@ from rugby.models import Try
 from rugby.models import League
 
 super_league = League.objects.filter(name="Super Rugby")[0]
-matches = Match.objects.filter(date__gte=datetime.now()-timedelta(days=4),league_id=super_league)
+matches = Match.objects.filter(date__gte=datetime.now()-timedelta(days=5))
 
 tries = Try.objects.filter(match__in=matches)
 
-output = "Here are the weeks Super Rugby highlights and tries. You can find the rest of our collection at [The Rugby Vault](http://therugbyvault.com)"
+output = "Here are the weeks match highlights and tries. You can find the rest of our collection at [The Rugby Vault](http://therugbyvault.com)"
 output += "\n\n&nbsp;\n\n"
 output += "***How to rate:*** To leave a rating on a match or try you can do so by clicking the stars underneath the video. Hopefully by the end of the season we can have a good ranking of tries and matches as determined by fans."
 output += "\n\n&nbsp;\n\n"
