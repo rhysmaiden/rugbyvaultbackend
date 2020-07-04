@@ -298,10 +298,10 @@ class Highlights(APIView):
 			video_link_found=1, error=0).order_by('-date')
 
 		if league_name != "all":
-			matches = matches.filter(league_id=league)[:12]
+			matches = matches.filter(league_id=league)
 			
-		else:
-			matches = matches[:12]
+		
+		matches = matches[:12]
 
 
 		tries = Try.objects.filter(error=0).order_by('-match__date')
