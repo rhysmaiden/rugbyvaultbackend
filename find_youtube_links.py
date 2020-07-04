@@ -32,7 +32,7 @@ matches = Match.objects.filter(
     video_link_found=0).order_by('-date')
 
 
-DEVELOPER_KEYS = ["AIzaSyDt3Y3ZMJ3aiq24lDyo1cga2rgtF6PVhYU","AIzaSyAB3stHsYPoEogXmGGSfxCBzD9zlsh8D3E","AIzaSyDgSdNuzbho-hF1hjADW_OFpWlMp6J4img"]
+DEVELOPER_KEYS = ["AIzaSyBSqLs1LgVGrHhZ2hAQLemjruCFmNic1kA","AIzaSyAB3stHsYPoEogXmGGSfxCBzD9zlsh8D3E","AIzaSyDgSdNuzbho-hF1hjADW_OFpWlMp6J4img"]
 code_index = 0
 
 for match in matches:
