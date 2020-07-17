@@ -27,6 +27,8 @@ from.models import League
 from.models import MatchRating
 from.models import TryRating
 import math
+from datetime import datetime
+from datetime import timedelta
 
 import re
 
@@ -247,8 +249,8 @@ Highlight = namedtuple('Highlights', ('players', 'matches', 'tries', 'teams'))
 class Highlights(APIView):
 	def get(self, request):
 
-		print(
-			'{timestamp} -- request started'.format(timestamp=datetime.utcnow().isoformat()))
+		# print(
+		# 	'{timestamp} -- request started'.format(timestamp=datetime.utcnow().isoformat()))
 
 		league_name = ""
 		league_try_name = ""
@@ -293,9 +295,11 @@ class Highlights(APIView):
 		except:
 			pass
 
+		last_month = datetime.today() - timedelta(days=30)
+
 		# Recent request
 		matches = Match.objects.filter(
-			video_link_found=1, error=0).order_by('-date')
+			video_link_found=1, error=0, date__gte=last_month).order_by('-date')
 
 		if league_name != "all":
 			matches = matches.filter(league_id=league)
@@ -304,7 +308,7 @@ class Highlights(APIView):
 		matches = matches[:12]
 
 
-		tries = Try.objects.filter(error=0).order_by('-match__date')
+		tries = Try.objects.filter(error=0, match__date__gte=last_month).order_by('-match__date')
 
 		if league_try_name != "all":
 			tries = tries.filter(match__league_id=try_league)[:12]
@@ -312,8 +316,8 @@ class Highlights(APIView):
 		else:
 			tries = tries[:12]
 
-		print(
-			'{timestamp} -- obtained data'.format(timestamp=datetime.utcnow().isoformat()))
+		# print(
+		# 	'{timestamp} -- obtained data'.format(timestamp=datetime.utcnow().isoformat()))
 
 		
 		match_serializer = MatchSerializer(
@@ -321,8 +325,8 @@ class Highlights(APIView):
 		try_serializer = TrySerializer(
 			tries, many=True)
 
-		print(
-			'{timestamp} -- finished serializing'.format(timestamp=datetime.utcnow().isoformat()))
+		# print(
+		# 	'{timestamp} -- finished serializing'.format(timestamp=datetime.utcnow().isoformat()))
 
 		return Response({
 			"matches": match_serializer.data,
