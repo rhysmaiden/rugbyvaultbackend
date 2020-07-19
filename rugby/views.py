@@ -301,6 +301,8 @@ class Highlights(APIView):
 		matches = Match.objects.filter(
 			video_link_found=1, error=0, date__gte=last_month).order_by('-date')
 
+		print(matches)
+
 		if league_name != "all":
 			matches = matches.filter(league_id=league)
 			
@@ -485,7 +487,7 @@ class VideoAPI(APIView):
 			match = Match.objects.filter(id=request.GET.get('id'))[0]
 
 			rating_object = MatchRating.objects.filter(
-				match=match, userId=request.GET.get('googleId'))
+				match=match)
 			rating = 0
 			if len(rating_object) > 0:
 				rating = rating_object[0].rating
