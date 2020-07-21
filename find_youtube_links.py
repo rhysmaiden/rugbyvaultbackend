@@ -1,7 +1,5 @@
 # Run script every 3 hours
 
-
-
 import django
 import wikipedia
 import os
@@ -11,29 +9,23 @@ import time
 import datetime
 from youtube_videos import youtube_search
 from datetime import datetime, timedelta
-#from youtube_search import YoutubeSearch
 import json
-# from youtube_search_v2 import search
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "rugby.settings")
 django.setup()
 from rugby.models import Match
-from rugby.models import League
-
-league = League.objects.filter(name="Pro 14")[0]
-
-
 
 enddate = datetime.today()
-startdate = enddate - timedelta(days=1000)
+startdate = enddate - timedelta(days=10000)
 
-print(startdate, enddate)
 matches = Match.objects.filter(
     video_link_found=0).order_by('-date')
 
 
 DEVELOPER_KEYS = ["AIzaSyBSqLs1LgVGrHhZ2hAQLemjruCFmNic1kA","AIzaSyAB3stHsYPoEogXmGGSfxCBzD9zlsh8D3E","AIzaSyDgSdNuzbho-hF1hjADW_OFpWlMp6J4img"]
 code_index = 0
+
+print(len(matches))
 
 for match in matches:
 
@@ -45,24 +37,13 @@ for match in matches:
 
     found_videos = []
 
-    # results = YoutubeSearch(match.home_team.team_name + " v " + match.away_team.team_name + " rugby highlights " + str(match.date.year), max_results=10).to_json()
-
-    # json_videos = json.loads(results)["videos"]
-
-    
-
-    # for vid in json_videos:
-    #     print(vid)
-
     try:
-        # print(DEVELOPER_KEYS[code_index])
         found_videos = youtube_search(
-        match.home_team.team_name + " v " + match.away_team.team_name + " rugby highlights " + str(match.date.year),DEVELOPER_KEY=DEVELOPER_KEYS[code_index])
+        match.home_team.team_name + " vs " + match.away_team.team_name + " rugby highlights " + str(match.date.year), DEVELOPER_KEY=DEVELOPER_KEYS[code_index])
     except Exception as e:
-        print(e)
         code_index += 1
-        print("Up")
-        if code_index == 3:   
+        if code_index == 3:
+            print("codes failed")   
             break
     
     foundVideo = False
@@ -71,11 +52,11 @@ for match in matches:
     for video in found_videos:
 
         video_date = datetime.strptime(video.date[:10], "%Y-%m-%d")
-        # print(match.date.day, video_date.day, start_time_period.day,end_time_period.day)
         if video_date > start_time_period and video_date < end_time_period:
-            video_id = video.video_id
-            foundVideo = True
-            break
+            if match.home_team.team_name in video.title and match.away_team.team_name in video.title:
+                video_id = video.video_id
+                foundVideo = True
+                break
         else:
             pass
 

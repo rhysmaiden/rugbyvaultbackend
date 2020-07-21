@@ -20,7 +20,6 @@ class Video:
 def youtube_search(q, max_results=3,order="relevance", token=None, location=None, location_radius=None,DEVELOPER_KEY=""):
 
     print("Starting search...")
-    print(DEVELOPER_KEY)
 
 
     youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION,developerKey=DEVELOPER_KEY)
@@ -35,17 +34,14 @@ def youtube_search(q, max_results=3,order="relevance", token=None, location=None
     location=location,
     locationRadius=location_radius).execute()
 
-    print("Got response")
-
     videos = []
 
     for search_result in search_response.get("items", []):
         if search_result["id"]["kind"] == "youtube#video":
-            #print(dir(search_result['id']))
-
             video = Video()
             video.video_id = search_result['id']['videoId']
             video.date = search_result['snippet']['publishedAt']
+            video.title = search_result['title']
             videos.append(video)
 
     return videos
