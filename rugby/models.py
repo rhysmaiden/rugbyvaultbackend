@@ -17,6 +17,7 @@ class League(models.Model):
 
 class Team(models.Model):
     team_name = models.TextField()
+    nickname = models.TextField(default="")
     league_id = models.ForeignKey(League, on_delete=models.CASCADE, default=1)
 
 

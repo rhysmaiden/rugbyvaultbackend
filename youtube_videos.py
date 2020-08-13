@@ -41,7 +41,7 @@ def youtube_search(q, max_results=3,order="relevance", token=None, location=None
             video = Video()
             video.video_id = search_result['id']['videoId']
             video.date = search_result['snippet']['publishedAt']
-            video.title = search_result['title']
+            video.title = search_result['snippet']['title']
             videos.append(video)
 
     return videos

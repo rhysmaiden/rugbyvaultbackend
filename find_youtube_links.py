@@ -22,7 +22,7 @@ matches = Match.objects.filter(
     video_link_found=0).order_by('-date')
 
 
-DEVELOPER_KEYS = ["AIzaSyBSqLs1LgVGrHhZ2hAQLemjruCFmNic1kA","AIzaSyAB3stHsYPoEogXmGGSfxCBzD9zlsh8D3E","AIzaSyDgSdNuzbho-hF1hjADW_OFpWlMp6J4img"]
+DEVELOPER_KEYS = ["AIzaSyDAJZYGRINk-3XBpGdbliu3IFBjdPrWgj8","AIzaSyBSqLs1LgVGrHhZ2hAQLemjruCFmNic1kA","AIzaSyAB3stHsYPoEogXmGGSfxCBzD9zlsh8D3E","AIzaSyDgSdNuzbho-hF1hjADW_OFpWlMp6J4img"]
 code_index = 0
 
 print(len(matches))
@@ -41,6 +41,7 @@ for match in matches:
         found_videos = youtube_search(
         match.home_team.team_name + " vs " + match.away_team.team_name + " rugby highlights " + str(match.date.year), DEVELOPER_KEY=DEVELOPER_KEYS[code_index])
     except Exception as e:
+        print(e)
         code_index += 1
         if code_index == 3:
             print("codes failed")   
@@ -53,12 +54,11 @@ for match in matches:
 
         video_date = datetime.strptime(video.date[:10], "%Y-%m-%d")
         if video_date > start_time_period and video_date < end_time_period:
-            if match.home_team.team_name in video.title and match.away_team.team_name in video.title:
-                video_id = video.video_id
-                foundVideo = True
-                break
-        else:
-            pass
+            if match.home_team.team_name in video.title or match.home_team.nickname:
+                if match.away_team.team_name in video.title or match.away_team.nickname:
+                    video_id = video.video_id
+                    foundVideo = True
+                    break
 
     if foundVideo:
         match.video_link_found = 1
