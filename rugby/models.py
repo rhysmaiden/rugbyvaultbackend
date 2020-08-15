@@ -45,6 +45,7 @@ class Match(models.Model):
     match_completely_processed = models.IntegerField(default=0)
     error = models.IntegerField(default=0)
     video_not_found = models.IntegerField(default=0)
+    region_blocked = models.TextField(default='')
 
     def avg_rating(self):
         ratings = MatchRating.objects.filter(match=self)

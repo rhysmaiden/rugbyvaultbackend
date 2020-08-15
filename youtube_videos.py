@@ -19,9 +19,6 @@ class Video:
 
 def youtube_search(q, max_results=3,order="relevance", token=None, location=None, location_radius=None,DEVELOPER_KEY=""):
 
-    print("Starting search...")
-
-
     youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION,developerKey=DEVELOPER_KEY)
 
     search_response = youtube.search().list(

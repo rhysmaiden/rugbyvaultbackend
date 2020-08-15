@@ -25,8 +25,6 @@ from rugby.models import League
 matches = Match.objects.filter(league_id = League.objects.filter(name="Super Rugby")[0]).order_by("-date")
 
 for match in matches:
-    print(match)
-
     found_videos = youtube_search(match.video_link,DEVELOPER_KEY="AIzaSyDgSdNuzbho-hF1hjADW_OFpWlMp6J4img")
 
     print(found_videos)
