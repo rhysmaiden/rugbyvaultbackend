@@ -31,6 +31,7 @@ from datetime import datetime
 from datetime import timedelta
 
 import re
+import random
 
 import urllib
 import urllib.request
@@ -843,7 +844,101 @@ class TriesAPI(APIView):
 			"pageCount": pageCount
 		})
 
+class CompareTriesAPI(APIView):
+	def get(self, request):
+
+		tries = Try.objects.filter(error=0)
+
+		try_a_random_int = random.randint(0, len(tries))
+		try_b_random_int = random.randint(0,len(tries))
+
+		try_a = tries[try_a_random_int]
+		try_b = tries[try_b_random_int]
+
+
+		#Serializing
+		try_a_serializer = TrySerializer(try_a)
+		try_b_serializer = TrySerializer(try_b)
 		
+
+		return Response({
+			"try_a": try_a_serializer.data,
+			"try_b": try_b_serializer.data,
+		})
+
+	def post(self, request):
+
+		body = json.loads(request.body.decode('utf-8'))
+
+		try_a = Try.objects.filter(id=body['try_a_id']).first()
+		try_b = Try.objects.filter(id=body['try_b_id']).first()
+
+		Ra = try_a.elo_rating
+		Rb = try_b.elo_rating
+		K = 30
+		d = 1
+
+		new_ratings = EloRating(Ra, Rb, K, d)
+		
+		try_a.elo_rating = new_ratings[0]
+		try_b.elo_rating = new_ratings[1]
+
+		try_a.save()
+		try_b.save()
+
+		return Response(None)
+
+class TriesLeaderboardAPI(APIView):
+	def get(self, request):
+
+		tries = Try.objects.all().order_by('-elo_rating')[:100]
+
+		try_serializer = TrySerializer(tries,many=True)
+
+		return Response({
+			"tries": try_serializer.data,
+		})
+
+# Python 3 program for Elo Rating 
+import math 
+  
+# Function to calculate the Probability 
+def Probability(rating1, rating2): 
+  
+    return 1.0 * 1.0 / (1 + 1.0 * math.pow(10, 1.0 * (rating1 - rating2) / 400)) 
+  
+  
+# Function to calculate Elo rating 
+# K is a constant. 
+# d determines whether 
+# Player A wins or Player B.  
+def EloRating(Ra, Rb, K, d): 
+   
+  
+    # To calculate the Winning 
+    # Probability of Player B 
+    Pb = Probability(Ra, Rb) 
+  
+    # To calculate the Winning 
+    # Probability of Player A 
+    Pa = Probability(Rb, Ra) 
+  
+    # Case -1 When Player A wins 
+    # Updating the Elo Ratings 
+    if (d == 1) : 
+        Ra = Ra + K * (1 - Pa) 
+        Rb = Rb + K * (0 - Pb) 
+      
+  
+    # Case -2 When Player B wins 
+    # Updating the Elo Ratings 
+    else : 
+        Ra = Ra + K * (0 - Pa) 
+        Rb = Rb + K * (1 - Pb)
+		
+    return [round(Ra,6), round(Rb,6)]
+      
+  
 
 
 
