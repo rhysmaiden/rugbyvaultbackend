@@ -37,7 +37,7 @@ class TrySerializer(serializers.ModelSerializer):
     class Meta:
         model = Try
         fields = ('avg_rating', 'rating_count', 'player', 'match',
-                  'video_link', 'id')
+                  'video_link', 'id', 'elo_rating')
 
 
 class HighlightSerializer(serializers.Serializer):

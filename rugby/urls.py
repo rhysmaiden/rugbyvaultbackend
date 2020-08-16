@@ -39,6 +39,7 @@ urlpatterns = [
     url(r'^matches/', views.MatchesAPI.as_view()),
     url(r'^tries/', views.TriesAPI.as_view()),
     url(r'^comparetries/', views.CompareTriesAPI.as_view()),
+    url(r'^triesleaderboard/', views.TriesLeaderboardAPI.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

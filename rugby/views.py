@@ -888,7 +888,16 @@ class CompareTriesAPI(APIView):
 
 		return Response(None)
 
-	
+class TriesLeaderboardAPI(APIView):
+	def get(self, request):
+
+		tries = Try.objects.all().order_by('-elo_rating')[:100]
+
+		try_serializer = TrySerializer(tries,many=True)
+
+		return Response({
+			"tries": try_serializer.data,
+		})
 
 # Python 3 program for Elo Rating 
 import math 
