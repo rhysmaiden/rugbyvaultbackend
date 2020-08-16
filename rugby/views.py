@@ -31,6 +31,7 @@ from datetime import datetime
 from datetime import timedelta
 
 import re
+import random
 
 import urllib
 import urllib.request
@@ -841,6 +842,28 @@ class TriesAPI(APIView):
 			"teamFilter": teamsFilter,
 			"leagueFilter": leaguesFilter,
 			"pageCount": pageCount
+		})
+
+class CompareTriesAPI(APIView):
+	def get(self, request):
+
+		tries = Try.objects.filter(error=0)
+
+		try_a_random_int = random.randint(0, len(tries))
+		try_b_random_int = random.randint(0,len(tries))
+
+		try_a = tries[try_a_random_int]
+		try_b = tries[try_b_random_int]
+
+
+		#Serializing
+		try_a_serializer = TrySerializer(try_a)
+		try_b_serializer = TrySerializer(try_b)
+		
+
+		return Response({
+			"try_a": try_a_serializer.data,
+			"try_b": try_b_serializer.data,
 		})
 
 		
