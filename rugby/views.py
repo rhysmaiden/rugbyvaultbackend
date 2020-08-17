@@ -873,10 +873,16 @@ class CompareTriesAPI(APIView):
 		try_a = Try.objects.filter(id=body['try_a_id']).first()
 		try_b = Try.objects.filter(id=body['try_b_id']).first()
 
+		d = 0
+
+		if body['try_a_id'] == body['winner']:
+			d = 1
+		else:
+			d = 2
+
 		Ra = try_a.elo_rating
 		Rb = try_b.elo_rating
 		K = 30
-		d = 1
 
 		new_ratings = EloRating(Ra, Rb, K, d)
 		
