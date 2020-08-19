@@ -108,6 +108,7 @@ class Try(models.Model):
     minute = models.IntegerField(default=0)
     error = models.IntegerField(default=0)
     elo_rating = models.IntegerField(default=1000)
+    nz_elo_rating = models.IntegerField(default=1000)
 
     def avg_rating(self):
         ratings = TryRating.objects.filter(try_obj=self)

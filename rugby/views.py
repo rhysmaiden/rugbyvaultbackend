@@ -844,6 +844,58 @@ class TriesAPI(APIView):
 			"pageCount": pageCount
 		})
 
+class CompareTriesNZAPI(APIView):
+	def get(self, request):
+
+
+		start_date = datetime(2020, 6, 1)
+		tries = Try.objects.filter(match__home_team__team_name__in = ["Hurricanes", "Crusaders", "Chiefs", "Highlanders", "Blues"], match__date__gte = start_date)
+
+		try_a_random_int = random.randint(0, len(tries))
+		try_b_random_int = random.randint(0,len(tries))
+
+		try_a = tries[try_a_random_int]
+		try_b = tries[try_b_random_int]
+
+
+		#Serializing
+		try_a_serializer = TrySerializer(try_a)
+		try_b_serializer = TrySerializer(try_b)
+		
+
+		return Response({
+			"try_a": try_a_serializer.data,
+			"try_b": try_b_serializer.data,
+		})
+
+	def post(self, request):
+
+		body = json.loads(request.body.decode('utf-8'))
+
+		try_a = Try.objects.filter(id=body['try_a_id']).first()
+		try_b = Try.objects.filter(id=body['try_b_id']).first()
+
+		d = 0
+
+		if body['try_a_id'] == body['winner']:
+			d = 1
+		else:
+			d = 2
+
+		Ra = try_a.nz_elo_rating
+		Rb = try_b.nz_elo_rating
+		K = 30
+
+		new_ratings = EloRating(Ra, Rb, K, d)
+		
+		try_a.nz_elo_rating = new_ratings[0]
+		try_b.nz_elo_rating = new_ratings[1]
+
+		try_a.save()
+		try_b.save()
+
+		return Response(None)
+
 class CompareTriesAPI(APIView):
 	def get(self, request):
 
@@ -898,6 +950,19 @@ class TriesLeaderboardAPI(APIView):
 	def get(self, request):
 
 		tries = Try.objects.all().order_by('-elo_rating')[:100]
+
+		try_serializer = TrySerializer(tries,many=True)
+
+		return Response({
+			"tries": try_serializer.data,
+		})
+
+class TriesLeaderboardNZAPI(APIView):
+	def get(self, request):
+
+		start_date = datetime(2020, 6, 1)
+
+		tries = Try.objects.filter(match__home_team__team_name__in = ["Hurricanes", "Crusaders", "Chiefs", "Highlanders", "Blues"], match__date__gte = start_date).order_by('-nz_elo_rating')[:20]
 
 		try_serializer = TrySerializer(tries,many=True)
 
