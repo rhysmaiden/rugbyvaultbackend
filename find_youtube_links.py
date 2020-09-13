@@ -1,7 +1,6 @@
 # Run script every 3 hours
 
 import django
-import wikipedia
 import os
 import subprocess
 import youtube_videos
