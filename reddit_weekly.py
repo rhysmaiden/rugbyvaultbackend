@@ -9,6 +9,10 @@ import django
 import re
 import difflib
 import praw
+import sys
+
+if (datetime.today().weekday() != 1):
+	sys.exit()
 
 def prior_week_end():
     return datetime.now() - timedelta(days=((datetime.now().isoweekday()) % 7))
