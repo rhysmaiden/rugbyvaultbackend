@@ -69,9 +69,8 @@ post_body = output
 reddit = praw.Reddit(client_id="h06MkxMmjq9wXQ", client_secret="2_UdJIXdTHV4zgitHZT9a6PQpEg", user_agent="my user agent", username=os.environ.get('REDDIT_USERNAME'), password=os.environ.get('REDDIT_PASSWORD'))
 
 post_title = 'Match and Try Highlights (' + prior_week_start().strftime("%d %b, %Y") + ' - ' + prior_week_end().strftime("%d %b, %Y") + ')'
-subreddit = 'test'
 
-reddit.subreddit("test").submit(post_title, selftext=post_body)
+reddit.subreddit("rugbyunion").submit(post_title, selftext=post_body)
 
 print(output)
 
