@@ -3,7 +3,6 @@ import urllib
 import urllib.request
 from bs4 import BeautifulSoup
 from datetime import datetime,timedelta
-import wikipedia
 import os
 import subprocess
 import django
