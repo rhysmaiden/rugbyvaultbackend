@@ -849,7 +849,7 @@ class CompareTriesNZAPI(APIView):
 
 
 		start_date = datetime(2020, 6, 1)
-		tries = Try.objects.filter(match__home_team__team_name__in = ["Hurricanes", "Crusaders", "Chiefs", "Highlanders", "Blues"], match__date__gte = start_date)
+		tries = Try.objects.filter(player__name="Jordie Barrett")
 
 		try_a_random_int = random.randint(0, len(tries))
 		try_b_random_int = random.randint(0,len(tries))
@@ -882,14 +882,14 @@ class CompareTriesNZAPI(APIView):
 		else:
 			d = 2
 
-		Ra = try_a.nz_elo_rating
-		Rb = try_b.nz_elo_rating
+		Ra = try_a.elo_rating
+		Rb = try_b.elo_rating
 		K = 30
 
 		new_ratings = EloRating(Ra, Rb, K, d)
 		
-		try_a.nz_elo_rating = new_ratings[0]
-		try_b.nz_elo_rating = new_ratings[1]
+		try_a.elo_rating = new_ratings[0]
+		try_b.elo_rating = new_ratings[1]
 
 		try_a.save()
 		try_b.save()
@@ -962,7 +962,7 @@ class TriesLeaderboardNZAPI(APIView):
 
 		start_date = datetime(2020, 6, 1)
 
-		tries = Try.objects.filter(match__home_team__team_name__in = ["Hurricanes", "Crusaders", "Chiefs", "Highlanders", "Blues"], match__date__gte = start_date).order_by('-nz_elo_rating')[:20]
+		tries = Try.objects.filter(player__name="Jordie Barrett").order_by('-elo_rating')
 
 		try_serializer = TrySerializer(tries,many=True)
 

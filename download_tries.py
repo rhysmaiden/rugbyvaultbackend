@@ -17,14 +17,12 @@ from rugby.models import Try
 from rugby.models import League
 import youtube_dl, subprocess
 
-PLAYER_NAME = "Cheslin Kolbe"
+PLAYER_NAME = "Jordie Barrett"
 
-
-league_object = League.objects.filter(name="International")[0]
 player_object = Player.objects.filter(name=PLAYER_NAME)[0]
 
 print(player_object.number_of_tries())
-player_tries = Try.objects.filter(player=player_object).filter(match__date__year=2019,match__league_id=league_object).order_by('match__date')
+player_tries = Try.objects.filter(player=player_object).order_by('-elo_rating')[:10]
 
 print(len(player_tries))
 
@@ -37,9 +35,9 @@ for index,try_object in enumerate(player_tries):
 
 
     URL = try_object.match.video_link
-    FROM = str(datetime.timedelta(seconds=try_object.start_time - 5))
+    FROM = str(datetime.timedelta(seconds=try_object.start_time))
     TO = str(datetime.timedelta(seconds=try_object.end_time))
-    TARGET = "/Users/rhysmaiden/Documents/" + try_object.player.name + "/" + try_object.player.name.replace(" ","") + str(index) + ".mp4"
+    TARGET = "/Users/rhysmaiden/Documents/" + try_object.player.name + "/" + try_object.player.name.replace(" ","") + str(index + 1) + ".mp4"
     print(TARGET)
     with youtube_dl.YoutubeDL({'format': 'best'}) as ydl:
         result = ydl.extract_info(URL, download=False)
