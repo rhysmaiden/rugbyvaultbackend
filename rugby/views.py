@@ -899,8 +899,9 @@ class CompareTriesNZAPI(APIView):
 class CompareTriesAPI(APIView):
 	def get(self, request):
 
-		tries = Try.objects.filter(error=0)
-
+		tries = Try.objects.filter(error=0, elo_rating__gte=999)
+                
+                games_unrated = len(Try.objects.filter(error=0,elo_rating=1000))
 		try_a_random_int = random.randint(0, len(tries))
 		try_b_random_int = random.randint(0,len(tries))
 
@@ -916,6 +917,7 @@ class CompareTriesAPI(APIView):
 		return Response({
 			"try_a": try_a_serializer.data,
 			"try_b": try_b_serializer.data,
+                        "games_unrated": games_unrated,
 		})
 
 	def post(self, request):
