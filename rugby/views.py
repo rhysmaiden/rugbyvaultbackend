@@ -900,8 +900,8 @@ class CompareTriesAPI(APIView):
 	def get(self, request):
 
 		tries = Try.objects.filter(error=0, elo_rating__gte=999)
-                
-        games_unrated = len(Try.objects.filter(error=0,elo_rating=1000))
+				
+		games_unrated = len(Try.objects.filter(error=0,elo_rating=1000))
 		try_a_random_int = random.randint(0, len(tries))
 		try_b_random_int = random.randint(0,len(tries))
 
@@ -917,7 +917,7 @@ class CompareTriesAPI(APIView):
 		return Response({
 			"try_a": try_a_serializer.data,
 			"try_b": try_b_serializer.data,
-            "games_unrated": games_unrated,
+			"games_unrated": games_unrated,
 		})
 
 	def post(self, request):
@@ -978,7 +978,7 @@ import math
 # Function to calculate the Probability 
 def Probability(rating1, rating2): 
   
-    return 1.0 * 1.0 / (1 + 1.0 * math.pow(10, 1.0 * (rating1 - rating2) / 400)) 
+	return 1.0 * 1.0 / (1 + 1.0 * math.pow(10, 1.0 * (rating1 - rating2) / 400)) 
   
   
 # Function to calculate Elo rating 
@@ -988,29 +988,29 @@ def Probability(rating1, rating2):
 def EloRating(Ra, Rb, K, d): 
    
   
-    # To calculate the Winning 
-    # Probability of Player B 
-    Pb = Probability(Ra, Rb) 
+	# To calculate the Winning 
+	# Probability of Player B 
+	Pb = Probability(Ra, Rb) 
   
-    # To calculate the Winning 
-    # Probability of Player A 
-    Pa = Probability(Rb, Ra) 
+	# To calculate the Winning 
+	# Probability of Player A 
+	Pa = Probability(Rb, Ra) 
   
-    # Case -1 When Player A wins 
-    # Updating the Elo Ratings 
-    if (d == 1) : 
-        Ra = Ra + K * (1 - Pa) 
-        Rb = Rb + K * (0 - Pb) 
-      
+	# Case -1 When Player A wins 
+	# Updating the Elo Ratings 
+	if (d == 1) : 
+		Ra = Ra + K * (1 - Pa) 
+		Rb = Rb + K * (0 - Pb) 
+	  
   
-    # Case -2 When Player B wins 
-    # Updating the Elo Ratings 
-    else : 
-        Ra = Ra + K * (0 - Pa) 
-        Rb = Rb + K * (1 - Pb)
+	# Case -2 When Player B wins 
+	# Updating the Elo Ratings 
+	else : 
+		Ra = Ra + K * (0 - Pa) 
+		Rb = Rb + K * (1 - Pb)
 		
-    return [round(Ra,6), round(Rb,6)]
-      
+	return [round(Ra,6), round(Rb,6)]
+	  
   
 
 
