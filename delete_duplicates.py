@@ -10,7 +10,6 @@ import youtube_videos
 import time
 import datetime
 from youtube_videos import youtube_search
-from datetime import datetime, timedelta
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "rugby.settings")
 django.setup()

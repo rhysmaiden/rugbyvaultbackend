@@ -616,12 +616,12 @@ class TryProcessingAPI(APIView):
 		league = League.objects.filter(name__in=["Mitre 10","USA","Top 14","Aviva Premiership"])
 		mitre_10_league = league[0]
 		league_2 = league[1]
-		league_3 = league[2]
+		top_14_league = League.objects.filter(name="Top 14")[0]
 		league_4 = league[3]
 		league_super = League.objects.filter(name="Super Rugby")[0]
 
 		if match_id == 'undefined':
-			match_object = Match.objects.filter(match_completely_processed=0,video_link_found=1,error=0).order_by('-date')[0]
+			match_object = Match.objects.filter(match_completely_processed=0,video_link_found=1,error=0).exclude(league_id=top_14_league).order_by('-date')[0]
 			print(match_object)
 		else:
 			match_object = Match.objects.filter(id=match_id)[0]
@@ -697,6 +697,8 @@ class TryProcessingAPI(APIView):
 			return Response({"players": players_sorted, "match": match_serializer.data})
 		else:
 			scoreboard_url = match_object.region_blocked + "/commentary"
+
+			print(scoreboard_url)
 			soup = make_soup(scoreboard_url)
 
 			events = soup.findAll('div', {'class': 'event'})
@@ -724,10 +726,8 @@ class TryProcessingAPI(APIView):
 
 				player_dict = {'player_name':player_name, 'time':time_cleaned, 'id':player_object.id}
 				player_dicts.append(player_dict)
-
 			
-				
-			players_sorted = sorted(player_dicts, key=lambda k: k['time'])
+			players_sorted = sorted(player_dicts, key=lambda k: int(k['time']))
 			
 			return Response({"players": players_sorted, "match": match_serializer.data})
 		return
