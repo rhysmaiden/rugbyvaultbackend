@@ -61,7 +61,7 @@ def make_soup(url):
 	soupdata = BeautifulSoup(thepage, "html.parser")
 	return soupdata
 
-for i in range(0,10000):
+for i in range(0,4):
 
 	try:
 
