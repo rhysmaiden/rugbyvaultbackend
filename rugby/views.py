@@ -10,6 +10,7 @@ from .serializers import TrySerializer
 from .serializers import TeamSerializer
 from rest_framework import viewsets
 from django.contrib.auth.models import User
+from rest_framework.decorators import action
 
 from django.db.models import Q
 from django.utils.decorators import method_decorator
@@ -26,6 +27,8 @@ from.models import Try
 from.models import League
 from.models import MatchRating
 from.models import TryRating
+from .models import Instagram
+
 import math
 from datetime import datetime
 from datetime import timedelta
@@ -517,7 +520,6 @@ class RatingAPI(APIView):
 		
 		if request.GET.get('type') == "match":
 			
-			
 			newrating = MatchRating(
 				match=Match.objects.filter(id=body['id'])[0], rating=body['rating'])
 			newrating.save()
@@ -737,8 +739,6 @@ class AddTryAPI(APIView):
 	def post(self, request):
 		body = json.loads(request.body.decode('utf-8'))
 
-		print(body['tries'])
-
 		match = Match.objects.filter(id=body['match']['id'])[0]
 
 		# Recieve: player_id, match_id, time (need to convert to seconds - done in frontend), 
@@ -768,8 +768,6 @@ class AddTryAPI(APIView):
 
 class ReportAPI(APIView):
 	def post(self, request):
-
-		print("REPORT")
 
 		body = json.loads(request.body.decode('utf-8'))
 		
@@ -961,12 +959,25 @@ class CompareTriesAPI(APIView):
 		try_a = Try.objects.filter(id=body['try_a_id']).first()
 		try_b = Try.objects.filter(id=body['try_b_id']).first()
 
+		
+
+
 		d = 0
 
 		if body['try_a_id'] == body['winner']:
 			d = 1
+
+			if body['instagram_worthy']:
+				if not Instagram.objects.filter(try_obj__id=body['try_a_id']).exists():
+					instagram_queue = Instagram(try_obj=try_a, has_posted=False)
+					instagram_queue.save()
 		else:
 			d = 2
+
+			if body['instagram_worthy']:
+				if not Instagram.objects.filter(try_obj__id=body['try_b_id']).exists():
+					instagram_queue = Instagram(try_obj=try_b, has_posted=False)
+					instagram_queue.save()
 
 		Ra = try_a.elo_rating
 		Rb = try_b.elo_rating
@@ -1043,7 +1054,36 @@ def EloRating(Ra, Rb, K, d):
 		Ra = Ra + K * (0 - Pa) 
 		Rb = Rb + K * (1 - Pb)
 		
-	return [round(Ra,6), round(Rb,6)]
+	return [round(Ra, 6), round(Rb, 6)]
+	
+
+class InstagramAPI(viewsets.ViewSet):
+	
+	@action(methods=['post'], detail=False)
+	def add_to_queue(self, request):
+
+		body = json.loads(request.body.decode('utf-8'))
+
+		try_obj = Try.objects.filter(id=body['id']).first()
+
+		if not Instagram.objects.filter(try_obj__id=body['id']).exists():
+			instagram_queue = Instagram(try_obj=try_obj, has_posted=False)
+			instagram_queue.save()
+
+		return Response(None)
+
+	def posted_to_instagram(self, request):
+
+		body = json.loads(request.body.decode('utf-8'))
+
+		try_obj = Try.objects.filter(id=body['id']).first()
+
+		if not Instagram.objects.filter(try_obj__id=body['id']).exists():
+			instagram_queue = Instagram(try_obj=try_obj, has_posted=False)
+			instagram_queue.save()
+
+		return Response(None)
+	  
 	  
   
 

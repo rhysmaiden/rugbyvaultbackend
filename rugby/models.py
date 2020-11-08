@@ -148,3 +148,6 @@ class TryRating(models.Model):
     def __str__(self):
         return str(self.try_obj) + ' - ' + str(self.rating)
 
+class Instagram(models.Model):
+    try_obj = models.ForeignKey(Try, on_delete=models.CASCADE)
+    has_posted = models.BooleanField()
