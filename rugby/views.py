@@ -967,20 +967,20 @@ class CompareTriesAPI(APIView):
 			d = 1
 
 			if body['instagram_worthy']:
-			    if not Instagram.objects.filter(try_obj__id=body['try_a_id']).exists():
-			        instagram_queue = Instagram(try_obj=try_a, has_posted=False)
-			        instagram_queue.save()
+				if not Instagram.objects.filter(try_obj__id=body['try_a_id']).exists():
+					instagram_queue = Instagram(try_obj=try_a, has_posted=False)
+					instagram_queue.save()
 
-                multiply_score_a = 2
+				multiply_score_a = 2
 		else:
 			d = 2
 
 			if body['instagram_worthy']:
-			    if not Instagram.objects.filter(try_obj__id=body['try_b_id']).exists():
-			        instagram_queue = Instagram(try_obj=try_b, has_posted=False)
-			        instagram_queue.save()
+				if not Instagram.objects.filter(try_obj__id=body['try_b_id']).exists():
+					instagram_queue = Instagram(try_obj=try_b, has_posted=False)
+					instagram_queue.save()
 
-                multiply_score_b = 2
+				multiply_score_b = 2
 
 		Ra = try_a.elo_rating
 		Rb = try_b.elo_rating
