@@ -963,21 +963,27 @@ class CompareTriesAPI(APIView):
 
 
 		d = 0
+                multiply_score_a = 1
+                multiply_score_b = 1
 
 		if body['try_a_id'] == body['winner']:
 			d = 1
 
 			if body['instagram_worthy']:
-				if not Instagram.objects.filter(try_obj__id=body['try_a_id']).exists():
-					instagram_queue = Instagram(try_obj=try_a, has_posted=False)
-					instagram_queue.save()
+			    if not Instagram.objects.filter(try_obj__id=body['try_a_id']).exists():
+			        instagram_queue = Instagram(try_obj=try_a, has_posted=False)
+			        instagram_queue.save()
+
+                            multiply_score_a = 2
 		else:
 			d = 2
 
 			if body['instagram_worthy']:
-				if not Instagram.objects.filter(try_obj__id=body['try_b_id']).exists():
-					instagram_queue = Instagram(try_obj=try_b, has_posted=False)
-					instagram_queue.save()
+			    if not Instagram.objects.filter(try_obj__id=body['try_b_id']).exists():
+			        instagram_queue = Instagram(try_obj=try_b, has_posted=False)
+			        instagram_queue.save()
+
+                            multiply_score_b = 2
 
 		Ra = try_a.elo_rating
 		Rb = try_b.elo_rating
@@ -985,8 +991,8 @@ class CompareTriesAPI(APIView):
 
 		new_ratings = EloRating(Ra, Rb, K, d)
 		
-		try_a.elo_rating = new_ratings[0]
-		try_b.elo_rating = new_ratings[1]
+		try_a.elo_rating = new_ratings[0] * multiply_score_a
+		try_b.elo_rating = new_ratings[1] * multiply_score_b
 
 		try_a.save()
 		try_b.save()
