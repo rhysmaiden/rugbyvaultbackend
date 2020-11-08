@@ -933,7 +933,7 @@ class CompareTriesNZAPI(APIView):
 class CompareTriesAPI(APIView):
 	def get(self, request):
 
-		tries = Try.objects.filter(error=0, elo_rating__gte=999)
+		tries = Try.objects.filter(error=0, match__date__year=2020)
 				
 		games_unrated = len(Try.objects.filter(error=0,elo_rating=1000))
 		try_a_random_int = random.randint(0, len(tries))
