@@ -959,12 +959,9 @@ class CompareTriesAPI(APIView):
 		try_a = Try.objects.filter(id=body['try_a_id']).first()
 		try_b = Try.objects.filter(id=body['try_b_id']).first()
 
-		
-
-
 		d = 0
-                multiply_score_a = 1
-                multiply_score_b = 1
+		multiply_score_a = 1
+		multiply_score_b = 1
 
 		if body['try_a_id'] == body['winner']:
 			d = 1
@@ -974,7 +971,7 @@ class CompareTriesAPI(APIView):
 			        instagram_queue = Instagram(try_obj=try_a, has_posted=False)
 			        instagram_queue.save()
 
-                            multiply_score_a = 2
+                multiply_score_a = 2
 		else:
 			d = 2
 
@@ -983,7 +980,7 @@ class CompareTriesAPI(APIView):
 			        instagram_queue = Instagram(try_obj=try_b, has_posted=False)
 			        instagram_queue.save()
 
-                            multiply_score_b = 2
+                multiply_score_b = 2
 
 		Ra = try_a.elo_rating
 		Rb = try_b.elo_rating
