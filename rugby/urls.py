@@ -1,5 +1,6 @@
 from django.conf.urls import url, include
 from django.contrib import admin
+from rest_framework.decorators import action
 from . import views
 from django.views.generic import ListView, DetailView
 from rugby.models import Match
@@ -42,6 +43,8 @@ urlpatterns = [
     url(r'^comparetriesnz/', views.CompareTriesNZAPI.as_view()),
     url(r'^triesleaderboard/', views.TriesLeaderboardAPI.as_view()),
     url(r'^nztriesleaderboard/', views.TriesLeaderboardNZAPI.as_view()),
+    url(r'^instagram_queue/add', views.InstagramAPI.as_view({'post': 'add_to_queue'})),
+    url(r'^instagram_queue/posted', views.InstagramAPI.as_view({'post': 'posted_to_instagram'})),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

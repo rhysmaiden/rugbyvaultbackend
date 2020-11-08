@@ -4,6 +4,7 @@ from rugby.models import Player
 from rugby.models import Try
 from rugby.models import Team
 from rugby.models import League
+from rugby.models import Instagram
 from rugby.models import MatchRating
 from rugby.models import TryRating
 
@@ -29,3 +30,4 @@ admin.site.register(TryRating)
 admin.site.register(Player, PlayerAdmin)
 admin.site.register(League)
 admin.site.register(Try, TryAdmin)
+admin.site.register(Instagram)
