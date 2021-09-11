@@ -1,9 +1,9 @@
 from rest_framework import serializers
-from.models import Player
-from.models import Team
-from.models import Match
-from.models import Try
-from.models import League
+from rugby.player.models import Player
+from rugby.team.models import Team
+from rugby.match.models import Match
+from rugby.trie.models import Trie
+from rugby.league.models import League
 
 
 class PlayerSerializer(serializers.ModelSerializer):
@@ -35,7 +35,7 @@ class TrySerializer(serializers.ModelSerializer):
     match = MatchSerializer(many=False)
 
     class Meta:
-        model = Try
+        model = Trie
         fields = ('avg_rating', 'rating_count', 'player', 'match',
                   'video_link', 'id', 'elo_rating', 'nz_elo_rating')
 

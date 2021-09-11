@@ -20,14 +20,13 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.views import generic
 from django.views.generic import TemplateView, DetailView
-from.models import Player
-from.models import Team
-from.models import Match
-from.models import Try
-from.models import League
-from.models import MatchRating
-from.models import TryRating
-from .models import Instagram
+
+from rugby.player.models import Player
+from rugby.team.models import Team
+from rugby.match.models import *
+from rugby.trie.models import *
+from rugby.league.models import League
+from rugby.instagram.models import Instagram
 
 import math
 from datetime import datetime
@@ -314,7 +313,7 @@ class Highlights(APIView):
 		matches = matches[:12]
 
 
-		tries = Try.objects.filter(error=0, match__date__gte=last_month).order_by('-match__date')
+		tries = Trie.objects.filter(error=0, match__date__gte=last_month).order_by('-match__date')
 
 		if league_try_name != "all":
 			tries = tries.filter(match__league_id=try_league)[:12]
@@ -351,7 +350,7 @@ class PlayerAPI(APIView):
 		pageNumber = int(request.GET.get('page'))
 
 		player = Player.objects.filter(id=player_id)[0]
-		tries = Try.objects.filter(player=player)
+		tries = Trie.objects.filter(player=player)
 
 		#Filter information for querying database
 		tries = query_year_for_tries(tries,yearsParam)    
@@ -456,7 +455,7 @@ class MatchHistoryAPI(APIView):
 		matches = Match.objects.filter(Q(
 			home_team__in=[teams[0].id, teams[1].id]) & Q(away_team__in=[teams[0].id, teams[1].id])).filter(error=0).order_by('-date')
 
-		tries = Try.objects.filter(
+		tries = Trie.objects.filter(
 			match__in=matches).filter(error=0).order_by('-match__date')[:10]
 
 		team_serializer = TeamSerializer(teams, many=True)
@@ -474,8 +473,8 @@ class VideoAPI(APIView):
 	def get(self, request):
 
 		if request.GET.get('type') == "try":
-			single_try = Try.objects.filter(id=request.GET.get('id'))[0]
-			player_tries = Try.objects.filter(
+			single_try = Trie.objects.filter(id=request.GET.get('id'))[0]
+			player_tries = Trie.objects.filter(
 				player=single_try.player, error=0)[:12]
 
 			single_try_serializer = TrySerializer(single_try, many=False)
@@ -496,7 +495,7 @@ class VideoAPI(APIView):
 			if len(rating_object) > 0:
 				rating = rating_object[0].rating
 
-			tries = Try.objects.filter(match=match)
+			tries = Trie.objects.filter(match=match)
 			try_serializer = TrySerializer(tries, many=True)
 
 			matches = Match.objects.filter(Q(
@@ -527,7 +526,7 @@ class RatingAPI(APIView):
 		elif request.GET.get('type') == "try":
 			
 			newrating = TryRating(
-				try_obj=Try.objects.filter(id=body['id'])[0], rating=body['rating'])
+				try_obj=Trie.objects.filter(id=body['id'])[0], rating=body['rating'])
 			newrating.save()
 			
 
@@ -567,7 +566,7 @@ class ChartAPI(APIView):
 			})
 
 		elif type == "try":
-			object_list = Try.objects.all()
+			object_list = Trie.objects.all()
 
 			if requested_range == "allTime":
 				object_list = object_list
@@ -776,7 +775,7 @@ class ReportAPI(APIView):
 			match.error = 1
 			match.save()
 		else:
-			try_obj = Try.objects.filter(id=body['id'])[0]
+			try_obj = Trie.objects.filter(id=body['id'])[0]
 			try_obj.error = 1
 			try_obj.save()
 
@@ -837,7 +836,7 @@ class TriesAPI(APIView):
 		teamsParam = request.GET.get('team').split(",")
 		leaguesParam = request.GET.get('league').split(",")
 
-		tries = Try.objects.filter(error=0)
+		tries = Trie.objects.filter(error=0)
 
 		# Ordering
 		if order == "date":
@@ -881,7 +880,7 @@ class CompareTriesNZAPI(APIView):
 
 
 		start_date = datetime(2020, 6, 1)
-		tries = Try.objects.filter(player__name="Jordie Barrett")
+		tries = Trie.objects.filter(player__name="Jordie Barrett")
 
 		try_a_random_int = random.randint(0, len(tries))
 		try_b_random_int = random.randint(0,len(tries))
@@ -904,8 +903,8 @@ class CompareTriesNZAPI(APIView):
 
 		body = json.loads(request.body.decode('utf-8'))
 
-		try_a = Try.objects.filter(id=body['try_a_id']).first()
-		try_b = Try.objects.filter(id=body['try_b_id']).first()
+		try_a = Trie.objects.filter(id=body['try_a_id']).first()
+		try_b = Trie.objects.filter(id=body['try_b_id']).first()
 
 		d = 0
 
@@ -931,9 +930,9 @@ class CompareTriesNZAPI(APIView):
 class CompareTriesAPI(APIView):
 	def get(self, request):
 
-		tries = Try.objects.filter(error=0, match__date__year=2020)
+		tries = Trie.objects.filter(error=0, match__date__year=2020)
 				
-		games_unrated = len(Try.objects.filter(error=0,elo_rating=1000))
+		games_unrated = len(Trie.objects.filter(error=0,elo_rating=1000))
 		try_a_random_int = random.randint(0, len(tries))
 		try_b_random_int = random.randint(0,len(tries))
 
@@ -956,8 +955,8 @@ class CompareTriesAPI(APIView):
 
 		body = json.loads(request.body.decode('utf-8'))
 
-		try_a = Try.objects.filter(id=body['try_a_id']).first()
-		try_b = Try.objects.filter(id=body['try_b_id']).first()
+		try_a = Trie.objects.filter(id=body['try_a_id']).first()
+		try_b = Trie.objects.filter(id=body['try_b_id']).first()
 
 		d = 0
 		multiply_score_a = 1
@@ -999,7 +998,7 @@ class CompareTriesAPI(APIView):
 class TriesLeaderboardAPI(APIView):
 	def get(self, request):
 
-		tries = Try.objects.all().order_by('-elo_rating')[:100]
+		tries = Trie.objects.all().order_by('-elo_rating')[:100]
 
 		try_serializer = TrySerializer(tries,many=True)
 
@@ -1012,7 +1011,7 @@ class TriesLeaderboardNZAPI(APIView):
 
 		start_date = datetime(2020, 6, 1)
 
-		tries = Try.objects.filter(player__name="Jordie Barrett").order_by('-elo_rating')
+		tries = Trie.objects.filter(player__name="Jordie Barrett").order_by('-elo_rating')
 
 		try_serializer = TrySerializer(tries,many=True)
 
@@ -1067,7 +1066,7 @@ class InstagramAPI(viewsets.ViewSet):
 
 		body = json.loads(request.body.decode('utf-8'))
 
-		try_obj = Try.objects.filter(id=body['id']).first()
+		try_obj = Trie.objects.filter(id=body['id']).first()
 
 		if not Instagram.objects.filter(try_obj__id=body['id']).exists():
 			instagram_queue = Instagram(try_obj=try_obj, has_posted=False)
@@ -1079,7 +1078,7 @@ class InstagramAPI(viewsets.ViewSet):
 
 		body = json.loads(request.body.decode('utf-8'))
 
-		try_obj = Try.objects.filter(id=body['id']).first()
+		try_obj = Trie.objects.filter(id=body['id']).first()
 
 		if not Instagram.objects.filter(try_obj__id=body['id']).exists():
 			instagram_queue = Instagram(try_obj=try_obj, has_posted=False)

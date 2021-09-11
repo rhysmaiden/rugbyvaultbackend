@@ -3,10 +3,6 @@ from django.contrib import admin
 from rest_framework.decorators import action
 from . import views
 from django.views.generic import ListView, DetailView
-from rugby.models import Match
-from rugby.models import Try
-from rugby.models import Player
-from rugby.models import Team
 
 import itertools
 from itertools import chain
