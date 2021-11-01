@@ -299,11 +299,9 @@ class Highlights(APIView):
 		except:
 			pass
 
-		last_month = datetime.today() - timedelta(days=30)
-
 		# Recent request
 		matches = Match.objects.filter(
-			video_link_found=1, error=0, date__gte=last_month).order_by('-date')
+			video_link_found=1, error=0).order_by('-date')
 
 		print(matches)
 
@@ -314,7 +312,7 @@ class Highlights(APIView):
 		matches = matches[:12]
 
 
-		tries = Try.objects.filter(error=0, match__date__gte=last_month).order_by('-match__date')
+		tries = Try.objects.filter(error=0).order_by('-match__date')
 
 		if league_try_name != "all":
 			tries = tries.filter(match__league_id=try_league)[:12]
