@@ -1,16 +1,15 @@
 # The Rugby Vault
 
-A rugby union website that manages match and try highlights.
+A rugby union website highlight that collects match and try highlights.
 
-## Getting Started
+## Environments
 
-
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+The application was developed on MacOS Catalina and has been tested on all newer versions of MacOS.
 
 ### Prerequisites
 
 * python3
-* Django
+* pip3
 
 
 
@@ -27,21 +26,45 @@ git clone https://github.com/rhysmaiden/rugbyvaultbackend.git
 2. Download all project dependencies
 
 ```
-pip3 install ______
+pip3 install -r requirements.txt
 ```
 
-* django-mathfilters
-* django-materialize
-* django-rest-framework
-
-
-## Deployment
+## Usage Instructions
 
 Start server
 
 ```
-python3 manage.py rumserver
+python3 manage.py runserver
 ```
+
+## Scheduled Scripts
+
+Fetch the matches from ESPN and put them in the database for processing - Runs daily
+```
+python3 scraper_v2.py
+```
+
+Fetch youtube links for each of the matches created from the script above. - Runs daily
+
+```
+python3 find_youtube_links.py
+```
+
+## Manual Processing
+
+The tool for finding the time of tries in match highlights can be found at ```/tryprocessing```
+
+1. Click the set current time button every time there is a transition between tries. This will populate the time from the youtube video into the form fields. 
+2. Manually adjust times if there are any issues such as:
+- Videos of non-tries in the highlights
+- In large score games they don't always include every try
+3. If the video is not displaying or the video is from the incorrect match, click the error button.
+
+**Future Development**
+- [] Remove database from git repository
+- [] Convert database to postgresql
+- [] Split api into multiple files
+- [] Find a way to split video files without human input
 
 ## Built With
 
