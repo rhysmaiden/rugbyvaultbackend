@@ -29,7 +29,7 @@ git clone https://github.com/rhysmaiden/rugbyvaultbackend.git
 pip3 install -r requirements.txt
 ```
 
-## Usage Instructions
+### Usage Instructions
 
 Start server
 
@@ -37,7 +37,7 @@ Start server
 python3 manage.py runserver
 ```
 
-## Scheduled Scripts
+### Scheduled Scripts
 
 Fetch the matches from ESPN and put them in the database for processing - Runs daily
 ```
@@ -50,7 +50,7 @@ Fetch youtube links for each of the matches created from the script above. - Run
 python3 find_youtube_links.py
 ```
 
-## Manual Processing
+### Manual Processing
 
 The tool for finding the time of tries in match highlights can be found at ```/tryprocessing```
 
@@ -66,11 +66,11 @@ The tool for finding the time of tries in match highlights can be found at ```/t
 - [] Split api into multiple files
 - [] Find a way to split video files without human input
 
-## Built With
+### Built With
 
 * [Django](https://docs.djangoproject.com/en/3.0/) - The web framework used
 
 
-## Authors
+### Authors
 
 * **Rhys Maiden** - *Sole contributor* - [rhysmaiden](https://github.com/rhysmaiden)
