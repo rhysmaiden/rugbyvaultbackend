@@ -60,7 +60,7 @@ The tool for finding the time of tries in match highlights can be found at ```/t
 - In large score games they don't always include every try
 3. If the video is not displaying or the video is from the incorrect match, click the error button.
 
-**Future Development**
+### Future Development ###
 - [] Remove database from git repository
 - [] Convert database to postgresql
 - [] Split api into multiple files
